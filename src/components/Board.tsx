@@ -1,16 +1,16 @@
-import React from "react";
-import { BoardItem } from "@/typings/Board";
+import React, { useState, useContext } from "react";
+import { TaskList } from "@/typings/Task";
 import styled from "styled-components";
-import TaskContainer from "./TaskContainer";
+import TaskItem from "./TaskItem";
+import { IoIosAdd } from "react-icons/io";
+import DialogForAppend from "./ui-parts/DialogForAppend";
 
+// boardはあくまでfilterされたlistを表示するのみにする
 type props = {
-  board: BoardItem;
+  groupName: string;
+  taskList: TaskList;
+  createTask: (newTaskName: string, groupName: string) => void;
 };
-
-// カードそれぞれで異なるタスクを持つ。カードのidとタスクを結びつける
-// TODO: 画面の動作確認後、データを作りこむ。それまでは文字列のみでテスト
-// それぞれのカードでstateとしてタスクを管理する。　stateの移動などはできるのだろうかねえ。
-// const taskLists = ["hogehogehogehogehoge", "hugahuga", "hogehoge"];
 
 const BoardName = styled.span`
   margin: 5px;
@@ -23,13 +23,40 @@ const TaskWrapper = styled.div`
   justify-content: space-around;
 `;
 
-function Card(props: props) {
+const TaskWrap = styled.div`
+  display: flex;
+  flex-flow: column;
+  justify-content: space-around;
+`;
+
+const Button = styled.button`
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+`;
+
+function Board(props: props) {
+  const [showModal, setShowModal] = useState(false);
+  const taskConatainer = props.taskList.map((taskItem) => {
+    return <TaskItem key={taskItem.id} taskName={taskItem.name} />;
+  });
+
   return (
     <TaskWrapper>
-      <BoardName>{props.board.name}</BoardName>
-      <TaskContainer taskLists={props.board.taskList} />
+      <BoardName>{props.groupName}</BoardName>
+      {taskConatainer}
+      <Button onClick={() => setShowModal(true)}>
+        <IoIosAdd />
+        <span>New </span>
+      </Button>
+      <DialogForAppend
+        showModal={showModal}
+        setShowModal={setShowModal}
+        groupName={props.groupName}
+        createTask={props.createTask}
+      ></DialogForAppend>
     </TaskWrapper>
   );
 }
 
-export default Card;
+export default Board;

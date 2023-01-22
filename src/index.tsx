@@ -2,8 +2,10 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import BoardWrapper from "./components/BoardWrapper";
-import App from "./App";
 import reportWebVitals from "./reportWebVitals";
+import "primereact/resources/themes/lara-light-indigo/theme.css"; //theme
+import "primereact/resources/primereact.min.css"; //core css
+import "primeicons/primeicons.css"; //icons
 
 if (process.env.NODE_ENV === "development") {
   const { worker } = require("./mocks/browser");

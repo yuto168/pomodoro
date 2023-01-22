@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
+import { useState, createContext } from "react";
 import Board from "./Board";
-import { Boards, BoardItem } from "@/typings/Board";
 import styled from "styled-components";
+import { useTaskList } from "../hooks/useTaskList";
 
 const BoardContainer = styled.div`
   display: flex;
@@ -10,27 +11,35 @@ const BoardContainer = styled.div`
   padding: 5px;
 `;
 
+export const DialogContext = createContext(
+  {} as {
+    isDialogVisible: boolean;
+    setIsDialogVisible: React.Dispatch<React.SetStateAction<boolean>>;
+  }
+);
+
 function BoardWrapper() {
-  const [boards, setBoards] = useState<Boards>([]);
-
-  // TODO: APIモックを作ってaxiosを設定する。一旦はrequireで代用
-  const fetchBoardsInfo = async () => {
-    const result = await require("../data/task-data.json");
-    setBoards(result.boards);
-  };
-
-  useEffect(() => {
-    fetchBoardsInfo();
-  }, []);
+  const { taskList, taskGroup, createTask } = useTaskList();
+  const [isDialogVisible, setIsDialogVisible] = useState<boolean>(false);
 
   return (
-    <>
+    <DialogContext.Provider value={{ isDialogVisible, setIsDialogVisible }}>
       <BoardContainer>
-        {boards.map((board: BoardItem) => {
-          return <Board key={board.id} board={board} />;
+        {taskGroup.map((groupName, index) => {
+          const groupedTask = taskList.filter((task) => {
+            return task.group === groupName;
+          });
+          return (
+            <Board
+              key={index}
+              groupName={groupName}
+              taskList={groupedTask}
+              createTask={createTask}
+            />
+          );
         })}
       </BoardContainer>
-    </>
+    </DialogContext.Provider>
   );
 }
 

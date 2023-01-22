@@ -1,0 +1,40 @@
+{
+    "taskList": [
+        {
+            "id": "1",
+            "group": "TODO",
+            "name": "TODO-hogehoge"
+        },
+        {
+            "id": "2",
+            "group": "Done",
+            "name": "hugahuga-hogehoge"
+        },
+        {
+            "id": "3",
+            "group": "Doing",
+            "name": "Doing-hogehoge"
+        },
+        {
+            "id": "4",
+            "group": "Done",
+            "name": "Done-hogehoge"
+        },
+        {
+            "id": "5",
+            "group": "TODO",
+            "name": "TODO-hogehoge"
+        },
+        {
+            "id": "6",
+            "group": "Done",
+            "name": "Done-hogehoge"
+        },
+        {
+            "id": "7",
+            "group": "Doing",
+            "name": "Doing-hogehoge"
+        }
+    ],
+    "taskGroup": ["TODO", "Done","Doing"]
+}
