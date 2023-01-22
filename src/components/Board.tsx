@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { TaskList } from "@/typings/Task";
+import { TaskList } from "../typings/Task";
 import styled from "styled-components";
 import TaskItem from "./TaskItem";
 import { IoIosAdd } from "react-icons/io";
