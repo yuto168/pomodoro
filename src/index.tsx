@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
+import BoardWrapper from "./components/BoardWrapper";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 
@@ -14,7 +15,7 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <App />
+    <BoardWrapper />
   </React.StrictMode>
 );
 

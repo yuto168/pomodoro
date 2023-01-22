@@ -11,7 +11,9 @@
     "@types/react-dom": "^18.0.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-icons": "^4.7.1",
     "react-scripts": "5.0.1",
+    "styled-components": "^5.3.6",
     "typescript": "^4.8.4",
     "web-vitals": "^2.1.4"
   },
@@ -41,6 +43,7 @@
   },
   "devDependencies": {
     "@types/node": "^18.11.9",
+    "@types/styled-components": "^5.1.26",
     "msw": "^0.49.0",
     "nsw": "^0.1.0"
   },
