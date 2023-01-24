@@ -19,7 +19,7 @@ export const DialogContext = createContext(
 );
 
 function BoardWrapper() {
-  const { taskList, taskGroup, createTask } = useTaskList();
+  const { taskList, taskGroup, createTask, deleteTask } = useTaskList();
   const [isDialogVisible, setIsDialogVisible] = useState<boolean>(false);
 
   return (
@@ -35,6 +35,7 @@ function BoardWrapper() {
               groupName={groupName}
               taskList={groupedTask}
               createTask={createTask}
+              deleteTask={deleteTask}
             />
           );
         })}

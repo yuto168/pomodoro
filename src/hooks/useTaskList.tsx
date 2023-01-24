@@ -32,17 +32,32 @@ export function useTaskList() {
       name: newTaskName,
     };
     setTaskList((prevState) => [...prevState, newTask]);
+  };
+  /**
+   * タスク削除
+   *
+   * @param {string} taskID
+   */
+  const deleteTask = (taskID: string) => {
+    setTaskList(
+      taskList.filter((taskItem: TaskItem) => {
+        return taskID !== taskItem.id;
+      })
+    );
+  };
+
+  useEffect(() => {
+    fetchTaskList();
+  }, []);
+
+  useEffect(() => {
     axios.post("tasklist", {
       task: {
         list: taskList,
         group: taskGroup,
       },
     });
-  };
-
-  useEffect(() => {
-    fetchTaskList();
-  }, []);
+  }, [taskList, taskGroup]);
 
   return {
     taskList,
@@ -50,5 +65,6 @@ export function useTaskList() {
     setTaskList,
     setTaskGroup,
     createTask,
+    deleteTask,
   };
 }

@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useRef } from "react";
 import { TaskList } from "../typings/Task";
 import styled from "styled-components";
 import TaskItem from "./TaskItem";
@@ -10,6 +10,7 @@ type props = {
   groupName: string;
   taskList: TaskList;
   createTask: (newTaskName: string, groupName: string) => void;
+  deleteTask: (taskID: string) => void;
 };
 
 const BoardName = styled.span`
@@ -36,9 +37,18 @@ const Button = styled.button`
 `;
 
 function Board(props: props) {
+  const ref = useRef<any>(null);
   const [showModal, setShowModal] = useState(false);
   const taskConatainer = props.taskList.map((taskItem) => {
-    return <TaskItem key={taskItem.id} taskName={taskItem.name} />;
+    return (
+      <TaskItem
+        key={taskItem.id}
+        taskName={taskItem.name}
+        taskID={taskItem.id}
+        deleteTask={props.deleteTask}
+        parentRef={ref}
+      />
+    );
   });
 
   return (
