@@ -1,4 +1,4 @@
-import React, { useState, useContext, useRef } from "react";
+import { useState, useRef } from "react";
 import { TaskList } from "../typings/Task";
 import styled from "styled-components";
 import TaskItem from "./TaskItem";
@@ -11,6 +11,7 @@ type props = {
   taskList: TaskList;
   createTask: (newTaskName: string, groupName: string) => void;
   deleteTask: (taskID: string) => void;
+  editTask: (newTaskName: string, taskID: string) => void;
 };
 
 const BoardName = styled.span`
@@ -21,12 +22,6 @@ const TaskWrapper = styled.div`
   display: flex;
   flex-flow: column;
   border: 1px solid lightgray;
-  justify-content: space-around;
-`;
-
-const TaskWrap = styled.div`
-  display: flex;
-  flex-flow: column;
   justify-content: space-around;
 `;
 
@@ -46,6 +41,7 @@ function Board(props: props) {
         taskName={taskItem.name}
         taskID={taskItem.id}
         deleteTask={props.deleteTask}
+        editTask={props.editTask}
         parentRef={ref}
       />
     );

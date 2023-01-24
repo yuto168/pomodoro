@@ -1,6 +1,5 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import "./index.css";
 import BoardWrapper from "./components/BoardWrapper";
 import reportWebVitals from "./reportWebVitals";
 import "primereact/resources/themes/lara-light-indigo/theme.css"; //theme

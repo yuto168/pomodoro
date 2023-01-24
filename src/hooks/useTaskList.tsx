@@ -46,10 +46,26 @@ export function useTaskList() {
     );
   };
 
+  /**
+   * 指定のタスクの名前を編集する
+   *
+   */
+  const editTask = (newTaskName: string, taskID: string) => {
+    setTaskList((prevState) => {
+      return prevState.map((taskItem) => {
+        if (taskItem.id === taskID) {
+          taskItem.name = newTaskName;
+        }
+        return taskItem;
+      });
+    });
+  };
+
   useEffect(() => {
     fetchTaskList();
   }, []);
 
+  // TODO: api通信を行い、成功したタイミングでsetをかけるが望ましいため修正
   useEffect(() => {
     axios.post("tasklist", {
       task: {
@@ -66,5 +82,6 @@ export function useTaskList() {
     setTaskGroup,
     createTask,
     deleteTask,
+    editTask,
   };
 }

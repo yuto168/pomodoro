@@ -4,15 +4,15 @@ import { AutoComplete } from "primereact/autocomplete";
 import { Button } from "primereact/button";
 
 type Props = {
+  taskID: string;
+  taskName: string;
   showModal: boolean;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
-  groupName: string;
-  createTask: (newTaskName: string, groupName: string) => void;
+  editTask: (newTaskName: string, groupName: string) => void;
 };
 
 function DialogForAppend(props: Props) {
-  console.log(props.groupName);
-  const [newTaskName, setNewTaskName] = useState<string>("");
+  const [newTaskName, setNewTaskName] = useState<string>(props.taskName);
 
   const renderFooter = () => {
     return (
@@ -20,7 +20,7 @@ function DialogForAppend(props: Props) {
         <Button
           label="Ok"
           onClick={() => {
-            props.createTask(newTaskName, props.groupName);
+            props.editTask(newTaskName, props.taskID);
             props.setShowModal(false);
             setNewTaskName("");
           }}
@@ -45,7 +45,6 @@ function DialogForAppend(props: Props) {
       appendTo="self"
       footer={renderFooter()}
     >
-      {props.groupName}
       <AutoComplete
         value={newTaskName}
         onChange={(e) => setNewTaskName(e.value)}
