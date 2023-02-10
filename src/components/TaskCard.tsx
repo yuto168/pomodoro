@@ -1,25 +1,20 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import { ContextMenu } from "primereact/contextmenu";
 import { VscTrash } from "react-icons/vsc";
 import { VscEdit } from "react-icons/vsc";
-import DialogForEdit from "./ui-parts/DialogForEdit";
+import DialogForEdit from "./ui-parts/EditTaskModal";
+import { TaskItem } from "src/typings/taskItem";
 
 type props = {
-  taskName: string;
-  taskID: string;
-  deleteTask: (taskID: string) => void;
+  task: TaskItem;
+  deleteTask: (target: TaskItem) => void;
   editTask: (newTaskName: string, taskID: string) => void;
-  parentRef: React.MutableRefObject<any>;
 };
 
-const Item = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #e0edf8;
-  margin: 2%;
-`;
+type CustomProps = {
+  isDragging?: boolean;
+};
 
 const Trash = styled(VscTrash)``;
 const Edit = styled(VscEdit)``;
@@ -28,31 +23,42 @@ const IconGroup = styled.div`
   display: flex;
   cursor: pointer;
 `;
+const Item = styled.div<CustomProps>`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #e0edf8;
+  margin: 4%;
+  opacity: ${(props) => (props.isDragging ? 0 : 1)};
+  cursor: move;
+`;
 
-function TaskItem(props: props) {
+function TaskCard(props: props) {
   const [showModal, setShowModal] = useState(false);
+  const ref = useRef<any>(null);
+
   const menuItem = [
     {
       label: "delete",
       command: () => {
-        props.deleteTask(props.taskID);
+        props.deleteTask(props.task);
       },
     },
   ];
 
   return (
     <>
-      <ContextMenu model={menuItem} ref={props.parentRef}></ContextMenu>
+      <ContextMenu model={menuItem} ref={ref}></ContextMenu>
       <Item
         onContextMenu={(e) => {
-          if (props.parentRef.current != null) props.parentRef.current.show(e);
+          if (ref.current != null) ref.current.show(e);
         }}
       >
-        {props.taskName}
+        {props.task.contents}
         <IconGroup>
           <Trash
             onClick={() => {
-              props.deleteTask(props.taskID);
+              props.deleteTask(props.task);
             }}
           />
           <Edit
@@ -63,8 +69,8 @@ function TaskItem(props: props) {
         </IconGroup>
       </Item>
       <DialogForEdit
-        taskID={props.taskID}
-        taskName={props.taskName}
+        taskID={props.task.id}
+        taskName={props.task.contents}
         showModal={showModal}
         setShowModal={setShowModal}
         editTask={props.editTask}
@@ -73,4 +79,4 @@ function TaskItem(props: props) {
   );
 }
 
-export default TaskItem;
+export default TaskCard;
