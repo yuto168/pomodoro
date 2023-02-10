@@ -1,17 +1,21 @@
 import { Dialog } from "primereact/dialog";
-import { useState, useContext } from "react";
+import { useState } from "react";
+import { v4 as uuidv4 } from "uuid";
+
 import { AutoComplete } from "primereact/autocomplete";
 import { Button } from "primereact/button";
+import { TaskItem } from "src/typings/taskItem";
+import { ITEM_TYPES } from "src/typings/itemTypes";
 
 type Props = {
+  index: number;
+  createTask: (newTask: TaskItem, index: number) => void;
   showModal: boolean;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
   groupName: string;
-  createTask: (newTaskName: string, groupName: string) => void;
 };
 
 function DialogForAppend(props: Props) {
-  console.log(props.groupName);
   const [newTaskName, setNewTaskName] = useState<string>("");
 
   const renderFooter = () => {
@@ -20,7 +24,16 @@ function DialogForAppend(props: Props) {
         <Button
           label="Ok"
           onClick={() => {
-            props.createTask(newTaskName, props.groupName);
+            // props.createTask(newTaskName, props.groupName);
+            props.createTask(
+              {
+                id: uuidv4(),
+                groupName: props.groupName,
+                contents: newTaskName,
+                type: ITEM_TYPES.card,
+              },
+              props.index
+            );
             props.setShowModal(false);
             setNewTaskName("");
           }}

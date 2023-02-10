@@ -3,40 +3,28 @@
         "list": [
             {
                 "id": "1",
-                "group": "TODO",
-                "name": "TODO-hogehoge"
+                "groupName": "TODO",
+                "contents": "TODO-hogehoge",
+                "type": "card"
             },
             {
                 "id": "2",
-                "group": "Done",
-                "name": "hugahuga-hogehoge"
+                "groupName": "done",
+                "contents": "hugahuga-hogehoge",
+                "type": "card"
             },
             {
                 "id": "3",
-                "group": "Doing",
-                "name": "Doing-hogehoge"
+                "groupName": "Doing",
+                "contents": "Doing-hogehoge",
+                "type": "card"
             },
             {
                 "id": "4",
-                "group": "Done",
-                "name": "Done-hogehoge"
-            },
-            {
-                "id": "5",
-                "group": "TODO",
-                "name": "TODO-hogehoge"
-            },
-            {
-                "id": "6",
-                "group": "Done",
-                "name": "Done-hogehoge"
-            },
-            {
-                "id": "7",
-                "group": "Doing",
-                "name": "Doing-hogehoge"
+                "groupName": "done",
+                "contents": "Done-hogehoge",
+                "type": "card"
             }
-        ],
-        "group": ["TODO", "Done","Doing"]
+        ]
     }
 }

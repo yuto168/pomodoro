@@ -1,46 +1,75 @@
-import React from "react";
-import { useState, createContext } from "react";
 import Board from "./Board";
 import styled from "styled-components";
-import { useTaskList } from "../hooks/useTaskList";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
+import { AddAColumnModal } from "./ui-parts/AddColumnModal";
+import { Draggable } from "./Draggable";
+import { useTaskGroups } from "../hooks/useTaskGroups";
+import { AddColumnButton } from "./ui-parts/AddColumnButton";
+import useAddColumnModal from "src/hooks/useAddColumnModal";
 
 const BoardContainer = styled.div`
   display: flex;
   background-color: #eee;
   justify-content: space-around;
   padding: 5px;
+  overflow: auto;
 `;
 
-export const DialogContext = createContext(
-  {} as {
-    isDialogVisible: boolean;
-    setIsDialogVisible: React.Dispatch<React.SetStateAction<boolean>>;
-  }
-);
+const BoardWrapper = () => {
+  const [
+    taskGroups,
+    createTaskGroups,
+    swapTaskGroups,
+    tasks,
+    createTask,
+    swapTasks,
+    deleteTask,
+    editTask,
+  ] = useTaskGroups();
 
-function BoardWrapper() {
-  const { taskList, taskGroup, createTask } = useTaskList();
-  const [isDialogVisible, setIsDialogVisible] = useState<boolean>(false);
+  const { showModal, setShowModal } = useAddColumnModal();
+  let index = 0;
 
   return (
-    <DialogContext.Provider value={{ isDialogVisible, setIsDialogVisible }}>
+    <DndProvider backend={HTML5Backend}>
       <BoardContainer>
-        {taskGroup.map((groupName, index) => {
-          const groupedTask = taskList.filter((task) => {
-            return task.group === groupName;
-          });
+        {taskGroups!.map((taskGroup, columnIndex) => {
+          const groupedTask = tasks.filter(
+            (item) => item.groupName === taskGroup.groupName
+          );
+          const firstIndex = index;
+          index = index + groupedTask.length;
           return (
-            <Board
-              key={index}
-              groupName={groupName}
-              taskList={groupedTask}
-              createTask={createTask}
-            />
+            <div key={taskGroup.groupName}>
+              <h2>{taskGroup.groupName.toUpperCase()}</h2>
+              <Draggable
+                item={taskGroup}
+                index={columnIndex}
+                swapItems={swapTaskGroups}
+              >
+                <Board
+                  firstIndex={firstIndex}
+                  taskList={groupedTask}
+                  groupName={taskGroup.groupName}
+                  editTask={editTask}
+                  deleteTask={deleteTask}
+                  swapTasks={swapTasks}
+                  createTask={createTask}
+                />
+              </Draggable>
+            </div>
           );
         })}
+        <AddColumnButton updateShowModal={setShowModal}></AddColumnButton>
+        <AddAColumnModal
+          showModal={showModal}
+          updateShowModal={setShowModal}
+          updateNewColumnName={createTaskGroups}
+        ></AddAColumnModal>
       </BoardContainer>
-    </DialogContext.Provider>
+    </DndProvider>
   );
-}
+};
 
 export default BoardWrapper;
