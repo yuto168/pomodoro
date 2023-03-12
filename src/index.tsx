@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import BoardWrapper from "./components/BoardWrapper";
+import Base from "./Base";
 import reportWebVitals from "./reportWebVitals";
 import "primereact/resources/themes/lara-light-indigo/theme.css"; //theme
 import "primereact/resources/primereact.min.css"; //core css
@@ -16,7 +16,7 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <BoardWrapper />
+    <Base />
   </React.StrictMode>
 );
 
