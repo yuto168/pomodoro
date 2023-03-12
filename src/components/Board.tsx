@@ -1,12 +1,13 @@
-import { useState, useRef, useCallback } from "react";
+import { useState } from "react";
 import styled from "styled-components";
 import TaskCard from "./TaskCard";
 import { IoIosAdd } from "react-icons/io";
-import DialogForAppend from "./ui-parts/AddTaskModal";
+import DialogForAddTask from "./ui-parts/DialogForAddTask";
 import { useDrop } from "react-dnd";
 import { Draggable } from "./Draggable";
 import { TaskItem, TaskItemWithIndex } from "src/typings/taskItem";
 import { ITEM_TYPES } from "src/typings/itemTypes";
+import layouts from "src/css/layouts";
 
 // boardはあくまでfilterされたlistを表示するのみにする
 type props = {
@@ -20,22 +21,36 @@ type props = {
   swapTasks: (dragIndex: number, hoverIndex: number, groupName: string) => void;
 };
 
-const BoardName = styled.span`
-  margin: 5px;
+const GlassBox = styled.div`
+  box-sizing: border-box;
+  background-color: rgba(230, 199, 210, 0.369);
+  backdrop-filter: blur(11px);
+  border: 0.5px solid #ffffff;
+  border-radius: 24px 16px 16px 16px;
+  box-shadow: rgba(0, 0, 0, 0.3) 2px 8px 8px;
 `;
 
-const TaskWrapper = styled.div`
+const TaskWrapper = styled(GlassBox)`
+  position: relative;
+  padding: 2%;
   display: flex;
-  margin: 5px;
   flex-flow: column;
-  border: 1px solid lightgray;
-  justify-content: space-around;
+  justify-content: start;
+  margin: 5px;
+  min-height: ${layouts.boardMinHeight}px;
+  width: ${layouts.boardWidth}px;
+  cursor: pointer;
 `;
 
-const Button = styled.button`
+const BoardFooter = styled.div`
   border: none;
   cursor: pointer;
-  display: inline-flex;
+  margin: 2px;
+  height: ${layouts.boardFooterHeight}px;
+  color: #ffffff;
+  &:hover {
+    backdrop-filter: blur(11px);
+  }
 `;
 
 export const Board: React.FC<props> = (props) => {
@@ -46,10 +61,8 @@ export const Board: React.FC<props> = (props) => {
       const dragIndex = dragItem.index;
       const targetIndex =
         dragIndex < props.firstIndex
-          ? // forward
-            props.firstIndex + props.taskList.length - 1
-          : // backward
-            props.firstIndex + props.taskList.length;
+          ? props.firstIndex + props.taskList.length - 1
+          : props.firstIndex + props.taskList.length;
       props.swapTasks(dragIndex, targetIndex, props.groupName);
       dragItem.index = targetIndex;
       dragItem.groupName = props.groupName;
@@ -58,36 +71,38 @@ export const Board: React.FC<props> = (props) => {
 
   const [showModal, setShowModal] = useState(false);
   return (
-    <TaskWrapper ref={drop}>
-      {props.taskList.map((taskItem, i) => {
-        return (
-          <div key={taskItem.id}>
-            <Draggable
-              item={taskItem}
-              index={props.firstIndex + i}
-              swapItems={props.swapTasks}
-            >
-              <TaskCard
-                task={taskItem}
-                deleteTask={props.deleteTask}
-                editTask={props.editTask}
-              />
-            </Draggable>
-          </div>
-        );
-      })}
-      <Button onClick={() => setShowModal(true)}>
-        <IoIosAdd />
-        <span>New </span>
-      </Button>
-      <DialogForAppend
+    <>
+      <TaskWrapper ref={drop}>
+        {props.taskList.map((taskItem, i) => {
+          return (
+            <div key={taskItem.id}>
+              <Draggable
+                item={taskItem}
+                index={props.firstIndex + i}
+                swapItems={props.swapTasks}
+              >
+                <TaskCard
+                  task={taskItem}
+                  deleteTask={props.deleteTask}
+                  editTask={props.editTask}
+                />
+              </Draggable>
+            </div>
+          );
+        })}
+        <BoardFooter onClick={() => setShowModal(true)}>
+          <span>New</span>
+          <IoIosAdd />
+        </BoardFooter>
+      </TaskWrapper>
+      <DialogForAddTask
         showModal={showModal}
         setShowModal={setShowModal}
         index={props.firstIndex + props.taskList.length}
         createTask={props.createTask}
         groupName={props.groupName}
-      ></DialogForAppend>
-    </TaskWrapper>
+      ></DialogForAddTask>
+    </>
   );
 };
 
