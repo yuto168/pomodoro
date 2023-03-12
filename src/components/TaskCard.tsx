@@ -1,7 +1,6 @@
 import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import { ContextMenu } from "primereact/contextmenu";
-import { VscTrash } from "react-icons/vsc";
 import { VscEdit } from "react-icons/vsc";
 import DialogForEdit from "./ui-parts/EditTaskModal";
 import { TaskItem } from "src/typings/taskItem";
@@ -16,7 +15,6 @@ type CustomProps = {
   isDragging?: boolean;
 };
 
-const Trash = styled(VscTrash)``;
 const Edit = styled(VscEdit)``;
 
 const IconGroup = styled.div`
@@ -35,6 +33,8 @@ const Item = styled.div<CustomProps>`
 
 function TaskCard(props: props) {
   const [showModal, setShowModal] = useState(false);
+  const [showIcon, setShowIcon] = useState(false);
+
   const ref = useRef<any>(null);
 
   const menuItem = [
@@ -42,6 +42,12 @@ function TaskCard(props: props) {
       label: "delete",
       command: () => {
         props.deleteTask(props.task);
+      },
+    },
+    {
+      label: "edit",
+      command: () => {
+        setShowModal(true);
       },
     },
   ];
@@ -53,20 +59,20 @@ function TaskCard(props: props) {
         onContextMenu={(e) => {
           if (ref.current != null) ref.current.show(e);
         }}
+        onMouseEnter={() => setShowIcon(true)}
+        onMouseLeave={() => setShowIcon(false)}
       >
-        {props.task.contents}
-        <IconGroup>
-          <Trash
-            onClick={() => {
-              props.deleteTask(props.task);
-            }}
-          />
-          <Edit
-            onClick={() => {
-              setShowModal(true);
-            }}
-          />
-        </IconGroup>
+        <Contents>{props.task.contents}</Contents>
+
+        {showIcon && (
+          <IconGroup>
+            <Edit
+              onClick={() => {
+                setShowModal(true);
+              }}
+            />
+          </IconGroup>
+        )}
       </Item>
       <DialogForEdit
         taskID={props.task.id}
