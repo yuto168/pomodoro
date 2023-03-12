@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 import { AutoComplete } from "primereact/autocomplete";
-import { Dialog } from "primereact/dialog";
 import { Button } from "primereact/button";
+import { GlassDialog } from "./GlassDialog";
 
-export type AddColumnModalProps = {
+export type DialogForAddColumnProps = {
   showModal: boolean;
   updateShowModal: (showModal: boolean) => void;
   updateNewColumnName: (name: string) => void;
 };
 
-export const AddAColumnModal: React.FC<AddColumnModalProps> = ({
+export const AddAColumnModal: React.FC<DialogForAddColumnProps> = ({
   showModal,
   updateShowModal,
   updateNewColumnName,
@@ -37,19 +37,17 @@ export const AddAColumnModal: React.FC<AddColumnModalProps> = ({
   };
 
   return (
-    <Dialog
-      modal={true}
+    <GlassDialog
+      modal={false}
       header="Add Column"
       visible={showModal}
       onHide={() => updateShowModal(false)}
-      position="center"
-      appendTo="self"
       footer={renderFooter()}
     >
       <AutoComplete
         value={newColumnName}
         onChange={(e) => setNewColumnName(e.value)}
       />
-    </Dialog>
+    </GlassDialog>
   );
 };
