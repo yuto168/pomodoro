@@ -1,5 +1,5 @@
-import BoardCanvas from "./components/BoardCanvas";
-import { Header } from "./components/ui-parts/Header";
+import BoardCanvas from "src/components/BoardCanvas";
+import { Header } from "src/components/Header";
 import styled, { createGlobalStyle } from "styled-components";
 
 const GlobalStyle = createGlobalStyle`
@@ -8,16 +8,7 @@ const GlobalStyle = createGlobalStyle`
   }
   body {
     margin: 0%;
-    background: linear-gradient(
-    107.54deg,
-    #12c2e9 0.88%,
-    #2fb5ea 7.72%,
-    #6ca4fc 22.18%,
-    #c471ed 51.57%,
-    #d875d6 63.68%,
-    #ff7daa 87.09%,
-    #eebbbe 105.05%
-  );
+    background: linear-gradient(111.86deg, rgba(71, 219, 252, 0.630208) 12.97%, rgba(81, 66, 255, 0.272461) 60.21%, rgba(230, 37, 234, 0.16085) 74.95%, rgba(182, 34, 25, 0) 96.19%), linear-gradient(180deg, #4931DD 0%, rgba(22, 17, 231, 0.630208) 0.01%, rgba(234, 0, 238, 0.272461) 56.77%, rgba(182, 34, 25, 0) 100%);
   /* 背景のグラデーションを固定するため */
     background-attachment: fixed;
     background-size: cover;
