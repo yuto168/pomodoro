@@ -1,129 +1,99 @@
-import axios from "axios";
-import { find } from "lodash";
-import { v4 as uuidv4 } from "uuid";
-import { data, statusList } from "../mocks/data/data";
 import { TaskItem } from "../typings/taskItem";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
+import { useApiClient } from "src/api/useApiClient";
 
-export const useTasks = (): [
-  TaskItem[],
-  (newTask: TaskItem, index: number) => void,
-  (dragIndex: number, hoverIndex: number, groupName: string) => void,
-  (groupNames: string[]) => void,
-  (target: TaskItem) => void,
-  (newTaskName: string, targetID: string) => void
-] => {
-  const [tasks, setTasks] = useState<TaskItem[] | undefined>([
-    // TODO:暫定的に初期値を設定。useEffectが解決次第対応
-    {
-      id: "2",
-      groupName: "open",
-      contents: "Purchase present",
-      type: "card",
-    },
-  ]);
+export const useTasks = () => {
+  const [tasks, setTasks] = useState<TaskItem[]>([]);
+  const { put, post, deleteItem } = useApiClient();
 
-  /**
-   * taskListの情報取得
-   *
-   */
-  const fetchTaskList = async () => {
-    const result = await axios.get("/tasklist");
-    debugger;
-    const data: TaskItem[] = result.data.task.list;
-    setTasks(data);
-  };
-
-  // useEffect(() => {
-  //   const initiate = async () => {
-  //     await fetchTaskList();
-  //   };
-  //   initiate();
-  // }, []);
-
-  // TODO: api通信を行い、成功したタイミングでsetをかけるが望ましいため修正
-  // useEffect(() => {
-  //   axios.post("tasklist", {
-  //     task: {
-  //       list: taskList,
-  //       group: taskGroup,
-  //     },
-  //   });
-  // }, [taskList, taskGroup]);
-
-  /** @type {*} */
-  const createTask = useCallback(
-    (newTask: TaskItem, index: number) => {
-      setTasks((current) => {
-        const newTasks = [...(current ?? [])];
-        newTasks.splice(index, 0, newTask);
-        return newTasks;
-      });
-    },
-    [setTasks]
-  );
+  const createTask = useCallback((newTask: TaskItem, index: number) => {
+    setTasks((current) => {
+      const newTasks = [...(current ?? [])];
+      newTasks.splice(index, 0, newTask);
+      saveTaskList(newTasks);
+      return newTasks;
+    });
+  }, []);
 
   const swapTasks = useCallback(
     (dragIndex: number, hoverIndex: number, groupName: string) => {
       setTasks((current) => {
-        if (!current) return;
         const item = current[dragIndex];
-        if (!item) return;
+        if (!item) return current;
         const newItems = current?.filter((_, idx) => idx !== dragIndex);
         newItems?.splice(hoverIndex, 0, { ...item, groupName });
-        return newItems;
+        return newItems ? newItems : current;
       });
     },
-    [setTasks]
+    []
   );
 
   /**
    * 指定のタスクの名前を編集する
    *
    */
-  const editTask = useCallback(
-    (newTaskName: string, targetID: string) => {
-      setTasks((prevState) => {
-        return prevState!.map((taskItem) => {
-          if (taskItem.id === targetID) {
-            taskItem.contents = newTaskName;
-          }
-          return taskItem;
-        });
+  const editTask = useCallback((newTaskName: string, targetID: string) => {
+    setTasks((prevState) => {
+      return prevState!.map((taskItem) => {
+        if (taskItem.id === targetID) {
+          taskItem.contents = newTaskName;
+        }
+        return taskItem;
       });
-    },
-    [setTasks]
-  );
+    });
+    saveTaskList(tasks);
+  }, []);
 
-  const deleteTask = useCallback(
-    (target: TaskItem) => {
-      setTasks((current) => {
-        if (!current) return;
-        const items = current.filter((item) => {
-          return item !== target;
-        });
-        return items;
+  const deleteTask = useCallback((target: TaskItem) => {
+    setTasks((current) => {
+      const items = current.filter((item) => {
+        return item.id !== target.id;
       });
-    },
-    [setTasks]
-  );
+      return items;
+    });
+    deleteSelectedTask(target.id);
+  }, []);
 
-  const alignTasks = useCallback(
-    (groupNames: string[]) => {
-      setTasks((current) => {
-        if (!current) return;
-        const newTasks: TaskItem[] = [];
-        groupNames.map((groupName) => {
-          const grouped = current.filter((task) => {
-            return task.groupName === groupName;
-          });
-          newTasks.push(...grouped);
+  const alignTasks = useCallback((groupNames: string[]) => {
+    setTasks((current) => {
+      const newTasks: TaskItem[] = [];
+      groupNames.map((groupName) => {
+        const grouped = current.filter((task) => {
+          return task.groupName === groupName;
         });
-        return newTasks;
+        newTasks.push(...grouped);
       });
-    },
-    [setTasks]
-  );
+      return newTasks;
+    });
+  }, []);
 
-  return [tasks ?? [], createTask, swapTasks, alignTasks, deleteTask, editTask];
+  /**
+   * taskList更新API実行
+   *
+   */
+  const saveTaskList = async (tasks: TaskItem[]) => {
+    const result = await put<TaskItem[]>("/taskList", tasks);
+    setTasks(result.data);
+  };
+
+  /**
+   *　taskList削除API実行
+   *
+   * @param {string} taskID 削除対象のtaskのID
+   */
+  const deleteSelectedTask = async (taskID: string) => {
+    await deleteItem("/taskList", {
+      TaskId: taskID,
+    });
+  };
+
+  return {
+    tasks,
+    createTask,
+    swapTasks,
+    alignTasks,
+    deleteTask,
+    editTask,
+    setTasks,
+  };
 };

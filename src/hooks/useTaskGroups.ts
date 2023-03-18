@@ -1,8 +1,9 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { ITEM_TYPES } from "src/typings/itemTypes";
-import { TaskItem } from "../typings/taskItem";
+import { TaskItem, RawTaskList } from "../typings/taskItem";
 import { v4 as uuidv4 } from "uuid";
 import { useTasks } from "./useTaskList";
+import { useApiClient } from "src/api/useApiClient";
 
 export const useTaskGroups = (): [
   TaskItem[],
@@ -14,6 +15,7 @@ export const useTaskGroups = (): [
   (target: TaskItem) => void,
   (newTaskName: string, targetID: string) => void
 ] => {
+  // TODO: タスクグループも初期値をAPIで取得する
   const [taskGroups, setTaskGroups] = useState<TaskItem[] | undefined>([
     {
       id: "1",
@@ -28,8 +30,30 @@ export const useTaskGroups = (): [
       type: "column",
     },
   ]);
-  const [tasks, createTask, swapTasks, alignTasks, deleteTask, editTask] =
-    useTasks();
+  const {
+    tasks,
+    createTask,
+    swapTasks,
+    alignTasks,
+    deleteTask,
+    editTask,
+    setTasks,
+  } = useTasks();
+
+  const { get } = useApiClient();
+
+  /**
+   * taskListの情報取得
+   *
+   */
+  const fetchTaskList = async () => {
+    const result = await get<RawTaskList>("/tasklist");
+    setTasks(result.task);
+  };
+
+  useEffect(() => {
+    fetchTaskList();
+  }, []);
 
   const createTaskGroups = useCallback(
     (name: string) => {
