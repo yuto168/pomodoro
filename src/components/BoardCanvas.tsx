@@ -19,6 +19,7 @@ const Wrapper = styled.div`
   left: 0;
   right: 0;
   display: inline-flex;
+  justify-content: space-between;
   overflow-x: auto;
 `;
 

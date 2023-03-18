@@ -1,6 +1,6 @@
 import { IoIosAdd } from "react-icons/io";
 import styled from "styled-components";
-import layouts from "src/css/layouts";
+import layouts from "src/constants/layouts";
 
 type AddColumnButtonProps = {
   updateShowModal: (showModal: boolean) => void;

@@ -7,7 +7,8 @@ import { useDrop } from "react-dnd";
 import { Draggable } from "./Draggable";
 import { TaskItem, TaskItemWithIndex } from "src/typings/taskItem";
 import { ITEM_TYPES } from "src/typings/itemTypes";
-import layouts from "src/css/layouts";
+import layouts from "src/constants/layouts";
+import { GlassBoard } from "./ui-parts/GlassBoard";
 
 // boardはあくまでfilterされたlistを表示するのみにする
 type props = {
@@ -20,27 +21,6 @@ type props = {
   editTask: (newTaskName: string, taskID: string) => void;
   swapTasks: (dragIndex: number, hoverIndex: number, groupName: string) => void;
 };
-
-const GlassBox = styled.div`
-  box-sizing: border-box;
-  background-color: rgba(230, 199, 210, 0.369);
-  backdrop-filter: blur(11px);
-  border: 0.5px solid #ffffff;
-  border-radius: 24px 16px 16px 16px;
-  box-shadow: rgba(0, 0, 0, 0.3) 2px 8px 8px;
-`;
-
-const TaskWrapper = styled(GlassBox)`
-  position: relative;
-  padding: 2%;
-  display: flex;
-  flex-flow: column;
-  justify-content: start;
-  margin: 5px;
-  min-height: ${layouts.boardMinHeight}px;
-  width: ${layouts.boardWidth}px;
-  cursor: pointer;
-`;
 
 const BoardFooter = styled.div`
   border: none;
@@ -72,7 +52,7 @@ export const Board: React.FC<props> = (props) => {
   const [showModal, setShowModal] = useState(false);
   return (
     <>
-      <TaskWrapper ref={drop}>
+      <GlassBoard dropRef={drop}>
         {props.taskList.map((taskItem, i) => {
           return (
             <div key={taskItem.id}>
@@ -94,7 +74,7 @@ export const Board: React.FC<props> = (props) => {
           <span>New</span>
           <IoIosAdd />
         </BoardFooter>
-      </TaskWrapper>
+      </GlassBoard>
       <DialogForAddTask
         showModal={showModal}
         setShowModal={setShowModal}

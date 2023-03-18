@@ -8,7 +8,8 @@ type Props = {
   onMouseLeave?: () => void;
 };
 
-const GlassItemContainer = styled.div`
+// グラスデザインのタスクアイテム
+const ItemContainer = styled.div`
   display: flex;
   align-items: center;
   box-sizing: border-box;
@@ -25,12 +26,12 @@ const GlassItemContainer = styled.div`
 
 export const GlassItem = (props: Props) => {
   return (
-    <GlassItemContainer
+    <ItemContainer
       onContextMenu={props.onContextMenu}
       onMouseEnter={props.onMouseEnter}
       onMouseLeave={props.onMouseLeave}
     >
       {props.children}
-    </GlassItemContainer>
+    </ItemContainer>
   );
 };
