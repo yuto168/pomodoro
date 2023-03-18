@@ -12,6 +12,7 @@ type Props = {
   children: ReactNode;
 };
 
+// グラスデザインのダイアログ
 const DialogWrapper = styled(Dialog)`
   .p-dialog,
   .p-dialog-header,
