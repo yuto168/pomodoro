@@ -7,8 +7,8 @@ import { useApiClient } from "src/api/useApiClient";
 
 export const useTaskGroups = (): [
   TaskItem[],
-  (name: string) => void,
-  (indexI: number, indexJ: number) => void,
+  (newName: string) => void,
+  (dragIndex: number, dropIndex: number) => void,
   TaskItem[],
   (newTask: TaskItem, index: number) => void,
   (dragIndex: number, hoverIndex: number, groupName: string) => void,
@@ -16,7 +16,7 @@ export const useTaskGroups = (): [
   (newTaskName: string, targetID: string) => void
 ] => {
   // TODO: タスクグループも初期値をAPIで取得する
-  const [taskGroups, setTaskGroups] = useState<TaskItem[] | undefined>([
+  const [taskGroups, setTaskGroups] = useState<TaskItem[]>([
     {
       id: "1",
       groupName: "open",
@@ -39,11 +39,10 @@ export const useTaskGroups = (): [
     editTask,
     setTasks,
   } = useTasks();
-
   const { get } = useApiClient();
 
   /**
-   * taskListの情報取得
+   * taskList取得API実行
    *
    */
   const fetchTaskList = async () => {
@@ -56,12 +55,17 @@ export const useTaskGroups = (): [
     fetchTaskList();
   }, []);
 
+  /**
+   * 新規タスクグループ作成
+   * @param {string} newName
+   *
+   */
   const createTaskGroups = useCallback(
-    (name: string) => {
+    (newName: string) => {
       setTaskGroups((current) => {
         const newTaskGroup = {
           id: uuidv4(),
-          groupName: name,
+          groupName: newName,
           contents: "",
           type: ITEM_TYPES.column,
         };
@@ -71,14 +75,18 @@ export const useTaskGroups = (): [
     [setTaskGroups]
   );
 
+  /**
+   * drag dropによるタスクグループの順番入れ替え
+   * @param {number} dragIndex drag対象のグループのindex
+   * @param {number} dropIndex drop対象のグループのindex
+   *
+   */
   const swapTaskGroups = useCallback(
-    (indexI: number, indexJ: number) => {
+    (dragIndex: number, dropIndex: number) => {
       setTaskGroups((current) => {
-        if (!current) return;
-        const newTaskGroups = current.filter((_, index) => index !== indexI);
-        newTaskGroups.splice(indexJ, 0, { ...current[indexI] });
+        const newTaskGroups = current.filter((_, index) => index !== dragIndex);
+        newTaskGroups.splice(dropIndex, 0, { ...current[dragIndex] });
 
-        debugger;
         // タスクグループの整列完了後、各タスクをそれぞれのグループに割り振る
         alignTasks(
           newTaskGroups.map((taskGroup) => {

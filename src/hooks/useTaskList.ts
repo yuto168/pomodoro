@@ -4,8 +4,14 @@ import { useApiClient } from "src/api/useApiClient";
 
 export const useTasks = () => {
   const [tasks, setTasks] = useState<TaskItem[]>([]);
-  const { put, post, deleteItem } = useApiClient();
+  const { put, deleteItem } = useApiClient();
 
+  /**
+   * 新規タスクの追加
+   * @param {TaskItem} newTask
+   * @param {number} index
+   * @return {*}
+   */
   const createTask = useCallback((newTask: TaskItem, index: number) => {
     setTasks((current) => {
       const newTasks = [...(current ?? [])];
@@ -17,6 +23,9 @@ export const useTasks = () => {
 
   /**
    * drag dropによるタスクの移動
+   * @param {number} dragIndex drag対象のタスクのindex
+   * @param {number} hoverIndex drop対象のタスクのindex
+   * @param {string} groupName 移動対象のグループ名
    *
    */
   const swapTasks = useCallback(
@@ -24,8 +33,11 @@ export const useTasks = () => {
       setTasks((current) => {
         const item = current[dragIndex];
         if (!item) return current;
-        const newItems = current?.filter((_, idx) => idx !== dragIndex);
-        newItems?.splice(hoverIndex, 0, { ...item, groupName });
+
+        // 一旦drag対象のタスク以外の配列を作成し、
+        // drag対象のタスクをdrop先のindexへ挿入する。
+        const newItems = current.filter((_, index) => index !== dragIndex);
+        newItems.splice(hoverIndex, 0, { ...item, groupName });
         return newItems ? newItems : current;
       });
     },
@@ -34,6 +46,8 @@ export const useTasks = () => {
 
   /**
    * 指定のタスクの名前を編集する
+   *　@param {string} newTaskName 新タスク名
+   *　@param {string} targetID 編集対象のタスクのID
    *
    */
   const editTask = useCallback((newTaskName: string, targetID: string) => {
@@ -51,6 +65,7 @@ export const useTasks = () => {
 
   /**
    * 指定のタスクの削除
+   *　@param {string} targetID 削除対象のタスクのID
    *
    */
   const deleteTask = useCallback((target: TaskItem) => {
@@ -71,8 +86,7 @@ export const useTasks = () => {
   const alignTasks = useCallback((groupNames: string[]) => {
     setTasks((current) => {
       const newTasks: TaskItem[] = [];
-      debugger;
-      groupNames.map((groupName) => {
+      groupNames.forEach((groupName) => {
         const grouped = current.filter((task) => {
           return task.groupName === groupName;
         });
@@ -84,6 +98,7 @@ export const useTasks = () => {
 
   /**
    * taskList更新API実行
+   * @param {TaskItem[]} tasks 変更後のtaskList
    *
    */
   const saveTaskList = async (tasks: TaskItem[]) => {
@@ -93,7 +108,6 @@ export const useTasks = () => {
 
   /**
    *　taskList削除API実行
-   *
    * @param {string} taskID 削除対象のtaskのID
    */
   const deleteSelectedTask = async (taskID: string) => {
