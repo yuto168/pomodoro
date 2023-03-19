@@ -34,14 +34,15 @@ export const useTasks = () => {
    */
   const editTask = useCallback((newTaskName: string, targetID: string) => {
     setTasks((prevState) => {
-      return prevState!.map((taskItem) => {
+      const newTaskList = prevState!.map((taskItem) => {
         if (taskItem.id === targetID) {
           taskItem.contents = newTaskName;
         }
         return taskItem;
       });
+      saveTaskList(newTaskList);
+      return newTaskList;
     });
-    saveTaskList(tasks);
   }, []);
 
   const deleteTask = useCallback((target: TaskItem) => {
