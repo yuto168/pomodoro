@@ -51,6 +51,7 @@ export const useTaskGroups = (): [
     setTasks(result.task);
   };
 
+  // 初回ローディング
   useEffect(() => {
     fetchTaskList();
   }, []);
@@ -76,6 +77,9 @@ export const useTaskGroups = (): [
         if (!current) return;
         const newTaskGroups = current.filter((_, index) => index !== indexI);
         newTaskGroups.splice(indexJ, 0, { ...current[indexI] });
+
+        debugger;
+        // タスクグループの整列完了後、各タスクをそれぞれのグループに割り振る
         alignTasks(
           newTaskGroups.map((taskGroup) => {
             return taskGroup.groupName;

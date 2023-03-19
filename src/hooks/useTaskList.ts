@@ -15,6 +15,10 @@ export const useTasks = () => {
     });
   }, []);
 
+  /**
+   * drag dropによるタスクの移動
+   *
+   */
   const swapTasks = useCallback(
     (dragIndex: number, hoverIndex: number, groupName: string) => {
       setTasks((current) => {
@@ -45,6 +49,10 @@ export const useTasks = () => {
     });
   }, []);
 
+  /**
+   * 指定のタスクの削除
+   *
+   */
   const deleteTask = useCallback((target: TaskItem) => {
     setTasks((current) => {
       const items = current.filter((item) => {
@@ -55,9 +63,15 @@ export const useTasks = () => {
     deleteSelectedTask(target.id);
   }, []);
 
+  /**
+   * 各タスクをそれぞれのグループに割り振る
+   * @param {string} groupNames タスクグループ名の配列
+   *
+   */
   const alignTasks = useCallback((groupNames: string[]) => {
     setTasks((current) => {
       const newTasks: TaskItem[] = [];
+      debugger;
       groupNames.map((groupName) => {
         const grouped = current.filter((task) => {
           return task.groupName === groupName;
