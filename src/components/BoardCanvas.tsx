@@ -30,7 +30,7 @@ const BoardName = styled.span`
 `;
 
 export const BoardCanvas: FC = () => {
-  const [
+  const {
     taskGroups,
     createTaskGroups,
     swapTaskGroups,
@@ -39,9 +39,11 @@ export const BoardCanvas: FC = () => {
     swapTasks,
     deleteTask,
     editTask,
-  ] = useTaskGroups();
+  } = useTaskGroups();
 
   const [showModal, setShowModal] = useState(false);
+
+  // 最初のタスクのindexを計算するため。
   let index = 0;
   return (
     <DndProvider backend={HTML5Backend}>
@@ -51,6 +53,8 @@ export const BoardCanvas: FC = () => {
             const groupedTask = tasks.filter(
               (item) => item.groupName === taskGroup.groupName
             );
+
+            // カンバン毎に持つ最初のタスクのindex。並び替え時にタスクの順番を持つ必要があるため。
             const firstIndex = index;
             index = index + groupedTask.length;
             return (

@@ -5,16 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import { useTasks } from "./useTaskList";
 import { useApiClient } from "src/api/useApiClient";
 
-export const useTaskGroups = (): [
-  TaskItem[],
-  (newName: string) => void,
-  (dragIndex: number, dropIndex: number) => void,
-  TaskItem[],
-  (newTask: TaskItem, index: number) => void,
-  (dragIndex: number, hoverIndex: number, groupName: string) => void,
-  (target: TaskItem) => void,
-  (newTaskName: string, targetID: string) => void
-] => {
+export const useTaskGroups = () => {
   const [taskGroups, setTaskGroups] = useState<TaskItem[]>([]);
   const {
     tasks,
@@ -39,7 +30,7 @@ export const useTaskGroups = (): [
   };
 
   /**
-   * taskとcolumnsの割振りを行う。
+   * 取得したデータからtaskとcolumnsの割振りを行う。
    *
    * @param {TaskItem[]} taskList
    * @return {*}
@@ -104,14 +95,14 @@ export const useTaskGroups = (): [
     [alignTasks, setTaskGroups]
   );
 
-  return [
-    taskGroups ?? [],
+  return {
+    taskGroups,
     createTaskGroups,
     swapTaskGroups,
-    tasks ?? [],
+    tasks,
     createTask,
     swapTasks,
     deleteTask,
     editTask,
-  ];
+  };
 };
