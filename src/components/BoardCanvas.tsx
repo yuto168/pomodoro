@@ -1,5 +1,5 @@
-import { useState } from "react";
-import Board from "./Board";
+import { FC, useState } from "react";
+import { Board } from "./Board";
 import styled from "styled-components";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
@@ -29,7 +29,7 @@ const BoardName = styled.span`
   color: white;
 `;
 
-const BoardCanvas = () => {
+export const BoardCanvas: FC = () => {
   const [
     taskGroups,
     createTaskGroups,
@@ -85,5 +85,3 @@ const BoardCanvas = () => {
     </DndProvider>
   );
 };
-
-export default BoardCanvas;

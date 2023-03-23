@@ -1,12 +1,12 @@
-import { useRef, useState } from "react";
+import { FC, useRef, useState } from "react";
 import styled from "styled-components";
 import { ContextMenu } from "primereact/contextmenu";
 import { VscEdit } from "react-icons/vsc";
-import DialogForEdit from "./ui-parts/DialogForEdit";
+import { DialogForEdit } from "./ui-parts/DialogForEdit";
 import { TaskItem } from "src/typings/taskItem";
 import { GlassItem } from "./ui-parts/GlassItem";
 
-type props = {
+type Props = {
   task: TaskItem;
   deleteTask: (target: TaskItem) => void;
   editTask: (newTaskName: string, taskID: string) => void;
@@ -44,7 +44,7 @@ const Contents = styled.span`
   overflow-wrap: anywhere;
 `;
 
-function TaskCard(props: props) {
+export const TaskCard: FC<Props> = (props) => {
   const [showModal, setShowModal] = useState(false);
   const [showIcon, setShowIcon] = useState(false);
 
@@ -96,6 +96,4 @@ function TaskCard(props: props) {
       ></DialogForEdit>
     </>
   );
-}
-
-export default TaskCard;
+};

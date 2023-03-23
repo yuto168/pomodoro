@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { ReactNode } from "react";
+import { FC, ReactNode } from "react";
 import layouts from "src/constants/layouts";
 import { ConnectDropTarget } from "react-dnd";
 
@@ -32,6 +32,6 @@ const BoardContainer = styled.div`
   box-shadow: rgba(0, 0, 0, 0.3) 2px 8px 8px;
 `;
 
-export const GlassBoard = (props: Props) => {
+export const GlassBoard: FC<Props> = (props) => {
   return <BoardContainer ref={props.dropRef}>{props.children}</BoardContainer>;
 };

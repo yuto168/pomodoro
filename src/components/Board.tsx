@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { FC, useState } from "react";
 import styled from "styled-components";
-import TaskCard from "./TaskCard";
+import { TaskCard } from "./TaskCard";
 import { IoIosAdd } from "react-icons/io";
-import DialogForAddTask from "./ui-parts/DialogForAddTask";
+import { DialogForAddTask } from "./ui-parts/DialogForAddTask";
 import { useDrop } from "react-dnd";
 import { Draggable } from "./Draggable";
 import { TaskItem, TaskItemWithIndex } from "src/typings/taskItem";
@@ -11,7 +11,7 @@ import layouts from "src/constants/layouts";
 import { GlassBoard } from "./ui-parts/GlassBoard";
 
 // boardはあくまでfilterされたlistを表示するのみにする
-type props = {
+type Props = {
   isOver?: any;
   firstIndex: number;
   groupName: string;
@@ -33,7 +33,7 @@ const BoardFooter = styled.div`
   }
 `;
 
-export const Board: React.FC<props> = (props) => {
+export const Board: FC<Props> = (props) => {
   const [_, drop] = useDrop(() => ({
     accept: ITEM_TYPES.card,
     hover(dragItem: TaskItemWithIndex) {
@@ -85,5 +85,3 @@ export const Board: React.FC<props> = (props) => {
     </>
   );
 };
-
-export default Board;

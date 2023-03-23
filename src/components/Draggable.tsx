@@ -3,19 +3,14 @@ import { TaskItem, TaskItemWithIndex } from "../typings/taskItem";
 import { useDrag, useDrop } from "react-dnd";
 import { useRef } from "react";
 
-type DraggableProps = {
+type Props = {
   item: TaskItem;
   index: number;
   swapItems: (dragIndex: number, hoverIndex: number, groupName: string) => void;
   children: React.ReactNode;
 };
 
-export const Draggable: FC<DraggableProps> = ({
-  item,
-  index,
-  swapItems,
-  children,
-}) => {
+export const Draggable: FC<Props> = ({ item, index, swapItems, children }) => {
   const ref = useRef<HTMLDivElement>(null);
 
   const [, drop] = useDrop({
@@ -47,7 +42,7 @@ export const Draggable: FC<DraggableProps> = ({
     },
   });
 
-  const [{ isDragging }, drag] = useDrag({
+  const [, drag] = useDrag({
     type: item.type,
     item: { ...item, index },
     isDragging: (monitor) => monitor.getItem().id === item.id,

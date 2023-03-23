@@ -1,6 +1,6 @@
 import { useCallback, useState, useEffect } from "react";
 import { ITEM_TYPES } from "src/typings/itemTypes";
-import { TaskItem, RawTaskList } from "../typings/taskItem";
+import { TaskItem, RawTaskList } from "src/typings/taskItem";
 import { v4 as uuidv4 } from "uuid";
 import { useTasks } from "./useTaskList";
 import { useApiClient } from "src/api/useApiClient";
@@ -15,21 +15,7 @@ export const useTaskGroups = (): [
   (target: TaskItem) => void,
   (newTaskName: string, targetID: string) => void
 ] => {
-  // TODO: タスクグループも初期値をAPIで取得する
-  const [taskGroups, setTaskGroups] = useState<TaskItem[]>([
-    {
-      id: "1",
-      groupName: "open",
-      contents: "Human Interest Form",
-      type: "column",
-    },
-    {
-      id: "1",
-      groupName: "done",
-      contents: "Human Interest Form",
-      type: "column",
-    },
-  ]);
+  const [taskGroups, setTaskGroups] = useState<TaskItem[]>([]);
   const {
     tasks,
     createTask,
@@ -47,7 +33,26 @@ export const useTaskGroups = (): [
    */
   const fetchTaskList = async () => {
     const result = await get<RawTaskList>("/tasklist");
-    setTasks(result.task);
+    const tasksAndGroups = distributeTasksToColumns(result.task);
+    setTasks(tasksAndGroups.tasks);
+    setTaskGroups(tasksAndGroups.groups);
+  };
+
+  /**
+   * taskとcolumnsの割振りを行う。
+   *
+   * @param {TaskItem[]} taskList
+   * @return {*}
+   */
+  const distributeTasksToColumns = (taskList: TaskItem[]) => {
+    return taskList.reduce(
+      (acc, current) => {
+        if (current.type === "card") acc.tasks.push(current);
+        else if (current.type === "column") acc.groups.push(current);
+        return acc;
+      },
+      { tasks: [] as TaskItem[], groups: [] as TaskItem[] }
+    );
   };
 
   // 初回ローディング
