@@ -5,7 +5,7 @@ import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { AddAColumnModal } from "./ui-parts/DialogForAddColumn";
 import { Draggable } from "./Draggable";
-import { useTaskGroups } from "../hooks/useTaskGroups";
+import { useTasks } from "../hooks/useTasks";
 import { AddColumnButton } from "./ui-parts/AddColumnButton";
 
 const BoardContainer = styled.div`
@@ -39,7 +39,7 @@ export const BoardCanvas: FC = () => {
     swapTasks,
     deleteTask,
     editTask,
-  } = useTaskGroups();
+  } = useTasks();
 
   const [showModal, setShowModal] = useState(false);
 
@@ -54,7 +54,8 @@ export const BoardCanvas: FC = () => {
               (item) => item.groupName === taskGroup.groupName
             );
 
-            // カンバン毎に持つ最初のタスクのindex。並び替え時にタスクの順番を持つ必要があるため。
+            // カンバン毎に持つ最初のタスクのindex。
+            // 並び替え時にタスクの順番をカンバンをまたいで管理するため
             const firstIndex = index;
             index = index + groupedTask.length;
             return (
