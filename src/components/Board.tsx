@@ -20,6 +20,7 @@ type Props = {
   deleteTask: (target: TaskItem) => void;
   editTask: (newTaskName: string, taskID: string) => void;
   swapTasks: (dragIndex: number, hoverIndex: number, groupName: string) => void;
+  saveCurrentTasks: () => void;
 };
 
 const BoardFooter = styled.div`
@@ -60,6 +61,7 @@ export const Board: FC<Props> = (props) => {
                 item={taskItem}
                 index={props.firstIndex + i}
                 swapItems={props.swapTasks}
+                saveCurrentTasks={props.saveCurrentTasks}
               >
                 <TaskCard
                   task={taskItem}

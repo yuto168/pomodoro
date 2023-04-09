@@ -109,6 +109,10 @@ export const useTasks = () => {
     setTasks(result.data);
   };
 
+  const saveCurrentTasks = () => {
+    saveTaskList(tasks);
+  };
+
   /**
    *　taskList削除API実行
    * @param {string} taskID 削除対象のtaskのID
@@ -202,5 +206,6 @@ export const useTasks = () => {
     swapTasks,
     deleteTask,
     editTask,
+    saveCurrentTasks,
   };
 };

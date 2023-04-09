@@ -39,6 +39,7 @@ export const BoardCanvas: FC = () => {
     swapTasks,
     deleteTask,
     editTask,
+    saveCurrentTasks,
   } = useTasks();
 
   const [showModal, setShowModal] = useState(false);
@@ -65,6 +66,7 @@ export const BoardCanvas: FC = () => {
                   item={taskGroup}
                   index={columnIndex}
                   swapItems={swapTaskGroups}
+                  saveCurrentTasks={saveCurrentTasks}
                 >
                   <Board
                     firstIndex={firstIndex}
@@ -74,6 +76,7 @@ export const BoardCanvas: FC = () => {
                     deleteTask={deleteTask}
                     swapTasks={swapTasks}
                     createTask={createTask}
+                    saveCurrentTasks={saveCurrentTasks}
                   />
                 </Draggable>
               </div>

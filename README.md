@@ -1,6 +1,16 @@
-# Getting Started with Create React App
+## SUMMARY
+Kanban board with Glassmorphism 
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
+## SAMPLE
+URL: https://pomodoro-2sbz-b8xcgvnoe-yuto168.vercel.app/
+
+## Front-End-Stack
+- React
+- TypeScripts
+- Styled-Components
+- Mock-Service-Worker
+
 
 ## Available Scripts
 
