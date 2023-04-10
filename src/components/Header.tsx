@@ -1,3 +1,4 @@
+import { FC } from "react";
 import styled from "styled-components";
 
 const BoardHeader = styled.div`
@@ -7,7 +8,7 @@ const BoardHeader = styled.div`
   color: white;
 `;
 
-export const Header: React.FC = () => {
+export const Header: FC = () => {
   return (
     <BoardHeader>
       <h1>React Kanban</h1>

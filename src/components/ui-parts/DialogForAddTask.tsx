@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, FC } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { AutoComplete } from "primereact/autocomplete";
 import { Button } from "primereact/button";
@@ -14,7 +14,7 @@ type Props = {
   groupName: string;
 };
 
-function DialogForAddTask(props: Props) {
+export const DialogForAddTask: FC<Props> = (props) => {
   const [newTaskName, setNewTaskName] = useState<string>("");
   const renderFooter = () => {
     return (
@@ -59,6 +59,4 @@ function DialogForAddTask(props: Props) {
       />
     </GlassDialog>
   );
-}
-
-export default DialogForAddTask;
+};

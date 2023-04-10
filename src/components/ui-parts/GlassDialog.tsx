@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { ReactNode } from "react";
+import { FC, ReactNode } from "react";
 import { Dialog } from "primereact/dialog";
 import { DialogTemplateType } from "primereact/dialog";
 
@@ -27,14 +27,14 @@ const DialogWrapper = styled(Dialog)`
   }
 `;
 
-export const GlassDialog = ({
+export const GlassDialog: FC<Props> = ({
   modal,
   header,
   visible,
   onHide,
   footer,
   children,
-}: Props) => {
+}) => {
   return (
     <DialogWrapper
       modal={modal}

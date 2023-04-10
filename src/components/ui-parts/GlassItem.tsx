@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { ReactNode } from "react";
+import { FC, ReactNode } from "react";
 
 type Props = {
   children: ReactNode;
@@ -24,7 +24,7 @@ const ItemContainer = styled.div`
   }
 `;
 
-export const GlassItem = (props: Props) => {
+export const GlassItem: FC<Props> = (props) => {
   return (
     <ItemContainer
       onContextMenu={props.onContextMenu}

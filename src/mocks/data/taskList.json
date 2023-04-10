@@ -23,6 +23,18 @@
             "groupName": "done",
             "contents": "Done-hogehoge",
             "type": "card"
+        },
+        {
+            "id": "1",
+            "groupName": "open",
+            "contents": "Human Interest Form",
+            "type": "column"
+        },
+        {
+            "id": "1",
+            "groupName": "done",
+            "contents": "Human Interest Form",
+            "type": "column"
         }
     ]
 }

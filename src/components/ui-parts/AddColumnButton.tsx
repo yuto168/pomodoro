@@ -2,7 +2,7 @@ import { IoIosAdd } from "react-icons/io";
 import styled from "styled-components";
 import layouts from "src/constants/layouts";
 
-type AddColumnButtonProps = {
+type Props = {
   updateShowModal: (showModal: boolean) => void;
 };
 
@@ -18,9 +18,7 @@ const ButtonContents = styled.div`
   min-width: ${layouts.boardWidth}px;
 `;
 
-export const AddColumnButton: React.FC<AddColumnButtonProps> = ({
-  updateShowModal,
-}) => {
+export const AddColumnButton: React.FC<Props> = ({ updateShowModal }) => {
   return (
     <ButtonWrapper>
       <ButtonContents

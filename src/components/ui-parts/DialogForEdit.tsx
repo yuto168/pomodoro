@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { FC, useState } from "react";
 import { AutoComplete } from "primereact/autocomplete";
 import { Button } from "primereact/button";
 import { GlassDialog } from "./GlassDialog";
@@ -11,7 +11,7 @@ type Props = {
   editTask: (newTaskName: string, groupName: string) => void;
 };
 
-function DialogForEdit(props: Props) {
+export const DialogForEdit: FC<Props> = (props) => {
   const [newTaskName, setNewTaskName] = useState<string>(props.taskName);
 
   const renderFooter = () => {
@@ -49,6 +49,4 @@ function DialogForEdit(props: Props) {
       />
     </GlassDialog>
   );
-}
-
-export default DialogForEdit;
+};

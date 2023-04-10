@@ -3,13 +3,13 @@ import { AutoComplete } from "primereact/autocomplete";
 import { Button } from "primereact/button";
 import { GlassDialog } from "./GlassDialog";
 
-export type DialogForAddColumnProps = {
+export type Props = {
   showModal: boolean;
   updateShowModal: (showModal: boolean) => void;
   updateNewColumnName: (name: string) => void;
 };
 
-export const AddAColumnModal: React.FC<DialogForAddColumnProps> = ({
+export const AddAColumnModal: React.FC<Props> = ({
   showModal,
   updateShowModal,
   updateNewColumnName,
