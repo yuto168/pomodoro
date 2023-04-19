@@ -3,26 +3,31 @@ import { TaskItem, TaskItemWithIndex } from "../typings/taskItem";
 import { useDrag, useDrop } from "react-dnd";
 import { useRef } from "react";
 
-type DraggableProps = {
+type Props = {
   item: TaskItem;
   index: number;
   swapItems: (dragIndex: number, hoverIndex: number, groupName: string) => void;
+  saveCurrentTasks: () => void;
   children: React.ReactNode;
 };
 
-export const Draggable: FC<DraggableProps> = ({
+export const Draggable: FC<Props> = ({
   item,
   index,
   swapItems,
+  saveCurrentTasks,
   children,
 }) => {
   const ref = useRef<HTMLDivElement>(null);
 
   const [, drop] = useDrop({
     accept: item.type,
+    // drop完了時にタスク更新を行う。
+    drop: () => {
+      saveCurrentTasks();
+    },
     hover(dragItem: TaskItemWithIndex, monitor) {
       if (!ref.current) return;
-
       const dragIndex = dragItem.index;
       const hoverIndex = index;
 
@@ -47,7 +52,7 @@ export const Draggable: FC<DraggableProps> = ({
     },
   });
 
-  const [{ isDragging }, drag] = useDrag({
+  const [, drag] = useDrag({
     type: item.type,
     item: { ...item, index },
     isDragging: (monitor) => monitor.getItem().id === item.id,

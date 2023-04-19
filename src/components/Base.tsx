@@ -1,6 +1,7 @@
-import BoardCanvas from "src/components/BoardCanvas";
+import { BoardCanvas } from "src/components/BoardCanvas";
 import { Header } from "src/components/Header";
 import styled, { createGlobalStyle } from "styled-components";
+import { FC } from "react";
 
 const GlobalStyle = createGlobalStyle`
   html {
@@ -20,7 +21,7 @@ const Layout = styled.div`
   flex-direction: column;
 `;
 
-function Base() {
+export const Base: FC = () => {
   return (
     <>
       <GlobalStyle />
@@ -30,6 +31,4 @@ function Base() {
       </Layout>
     </>
   );
-}
-
-export default Base;
+};
