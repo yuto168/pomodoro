@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useState, useRef } from "react";
 import styled from "styled-components";
 import { TaskCard } from "./TaskCard";
 import { IoIosAdd } from "react-icons/io";
@@ -8,19 +8,24 @@ import { Draggable } from "./Draggable";
 import { TaskItem, TaskItemWithIndex } from "src/typings/taskItem";
 import { ITEM_TYPES } from "src/typings/itemTypes";
 import layouts from "src/constants/layouts";
+import { ContextMenu } from "primereact/contextmenu";
 import { GlassBoard } from "./ui-parts/GlassBoard";
+import { EditColumnModal } from "src/components/ui-parts/DialogForEditColumn";
 
 // boardはあくまでfilterされたlistを表示するのみにする
 type Props = {
   isOver?: any;
   firstIndex: number;
   groupName: string;
+  currentGroup: TaskItem;
   taskList: TaskItem[];
   createTask: (newTask: TaskItem, index: number) => void;
   deleteTask: (target: TaskItem) => void;
   editTask: (newTaskName: string, taskID: string) => void;
   swapTasks: (dragIndex: number, hoverIndex: number, groupName: string) => void;
-  saveCurrentTasks: () => void;
+  saveCurrnetTaskList: () => void;
+  deleteColumn: (target: TaskItem) => void;
+  editColumn: (newGroupName: string, targetID: string) => void;
 };
 
 const BoardFooter = styled.div`
@@ -35,6 +40,22 @@ const BoardFooter = styled.div`
 `;
 
 export const Board: FC<Props> = (props) => {
+  const ref = useRef<any>(null);
+  const menuItem = [
+    {
+      label: "delete columun",
+      command: () => {
+        props.deleteColumn(props.currentGroup);
+      },
+    },
+    {
+      label: "edit columun",
+      command: () => {
+        setShowEditColumnModal(true);
+      },
+    },
+  ];
+
   const [_, drop] = useDrop(() => ({
     accept: ITEM_TYPES.card,
     hover(dragItem: TaskItemWithIndex) {
@@ -50,10 +71,17 @@ export const Board: FC<Props> = (props) => {
     },
   }));
 
+  const [showEditColumnModal, setShowEditColumnModal] = useState(false);
   const [showModal, setShowModal] = useState(false);
   return (
     <>
-      <GlassBoard dropRef={drop}>
+      <ContextMenu model={menuItem} ref={ref} />
+      <GlassBoard
+        dropRef={drop}
+        onContextMenu={(e) => {
+          if (ref.current != null) ref.current.show(e);
+        }}
+      >
         {props.taskList.map((taskItem, i) => {
           return (
             <div key={taskItem.id}>
@@ -61,7 +89,7 @@ export const Board: FC<Props> = (props) => {
                 item={taskItem}
                 index={props.firstIndex + i}
                 swapItems={props.swapTasks}
-                saveCurrentTasks={props.saveCurrentTasks}
+                saveCurrnetTaskList={props.saveCurrnetTaskList}
               >
                 <TaskCard
                   task={taskItem}
@@ -77,6 +105,12 @@ export const Board: FC<Props> = (props) => {
           <IoIosAdd />
         </BoardFooter>
       </GlassBoard>
+      <EditColumnModal
+        showModal={showEditColumnModal}
+        updateShowModal={setShowEditColumnModal}
+        editTaskGroups={props.editColumn}
+        targetID={props.currentGroup.id}
+      ></EditColumnModal>
       <DialogForAddTask
         showModal={showModal}
         setShowModal={setShowModal}

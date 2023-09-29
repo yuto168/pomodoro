@@ -6,6 +6,7 @@ import { ConnectDropTarget } from "react-dnd";
 type Props = {
   children: ReactNode;
   dropRef: ConnectDropTarget;
+  onContextMenu?: (e: any) => void;
 };
 
 // グラスデザインのカンバン
@@ -33,5 +34,9 @@ const BoardContainer = styled.div`
 `;
 
 export const GlassBoard: FC<Props> = (props) => {
-  return <BoardContainer ref={props.dropRef}>{props.children}</BoardContainer>;
+  return (
+    <BoardContainer ref={props.dropRef} onContextMenu={props.onContextMenu}>
+      {props.children}
+    </BoardContainer>
+  );
 };

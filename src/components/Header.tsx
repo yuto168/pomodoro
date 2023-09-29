@@ -1,17 +1,52 @@
-import { FC } from "react";
 import styled from "styled-components";
+import { Session } from "@supabase/supabase-js";
+import layouts from "src/constants/layouts";
+
+export type Props = {
+  session: Session | null;
+  signOut: () => Promise<void>;
+};
 
 const BoardHeader = styled.div`
-  font-size: 30px;
   margin-top: 0;
-  text-align: center;
   color: white;
+  height: 6em;
+  display: flex;
+  justify-content: space-between;
+  padding: 2em;
 `;
 
-export const Header: FC = () => {
+const Title = styled.div`
+  font-weight: 500;
+  font-size: 2em;
+  display: block;
+  text-align: center;
+`;
+
+const ButtonContents = styled.div`
+  border: none;
+  cursor: pointer;
+  color: #ffffff;
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+  min-width: ${layouts.boardWidth}px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const Header: React.FC<Props> = ({ session, signOut }) => {
   return (
     <BoardHeader>
-      <h1>React Kanban</h1>
+      <Title>React Kanban</Title>
+      <ButtonContents
+        onClick={() => {
+          signOut();
+        }}
+      >
+        <span>ログアウト</span>
+      </ButtonContents>
     </BoardHeader>
   );
 };
