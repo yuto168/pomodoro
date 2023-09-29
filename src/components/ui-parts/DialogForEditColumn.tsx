@@ -6,19 +6,21 @@ import { GlassDialog } from "./GlassDialog";
 export type Props = {
   showModal: boolean;
   updateShowModal: (showModal: boolean) => void;
-  createTaskGroups: (name: string) => void;
+  editTaskGroups: (newColumnName: string, targetID: string) => void;
+  targetID: string;
 };
 
-export const AddAColumnModal: React.FC<Props> = ({
+export const EditColumnModal: React.FC<Props> = ({
   showModal,
   updateShowModal,
-  createTaskGroups,
+  editTaskGroups,
+  targetID,
 }) => {
   const [newColumnName, setNewColumnName] = useState("");
 
   const handleOnSubmit = () => {
     if (!newColumnName) return;
-    createTaskGroups(newColumnName);
+    editTaskGroups(newColumnName, targetID);
     updateShowModal(false);
     setNewColumnName("");
   };
@@ -39,7 +41,7 @@ export const AddAColumnModal: React.FC<Props> = ({
   return (
     <GlassDialog
       modal={false}
-      header="Add Column"
+      header="Edit Column"
       visible={showModal}
       onHide={() => updateShowModal(false)}
       footer={renderFooter()}

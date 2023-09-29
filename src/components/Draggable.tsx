@@ -7,7 +7,7 @@ type Props = {
   item: TaskItem;
   index: number;
   swapItems: (dragIndex: number, hoverIndex: number, groupName: string) => void;
-  saveCurrentTasks: () => void;
+  saveCurrnetTaskList: () => void;
   children: React.ReactNode;
 };
 
@@ -15,16 +15,16 @@ export const Draggable: FC<Props> = ({
   item,
   index,
   swapItems,
-  saveCurrentTasks,
+  saveCurrnetTaskList,
   children,
 }) => {
   const ref = useRef<HTMLDivElement>(null);
 
   const [, drop] = useDrop({
     accept: item.type,
-    // drop完了時にタスク更新を行う。
     drop: () => {
-      saveCurrentTasks();
+      // drop完了時にタスク更新を行う。
+      saveCurrnetTaskList();
     },
     hover(dragItem: TaskItemWithIndex, monitor) {
       if (!ref.current) return;

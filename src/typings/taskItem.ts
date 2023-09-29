@@ -7,9 +7,9 @@ export type TaskItem = {
   type: keyof ItemTypes;
 };
 
-// APIで取得される型
-export type RawTaskList = {
+export type MockTaskList = {
   task: TaskItem[];
+  column: TaskItem[];
 };
 
 export type TaskItemWithIndex = TaskItem & { index: number };

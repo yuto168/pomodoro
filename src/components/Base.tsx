@@ -1,5 +1,7 @@
 import { BoardCanvas } from "src/components/BoardCanvas";
 import { Header } from "src/components/Header";
+import { Button } from "primereact/button";
+import { useAuth } from "src/hooks/useAuth";
 import styled, { createGlobalStyle } from "styled-components";
 import { FC } from "react";
 
@@ -17,17 +19,32 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 const Layout = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
 `;
 
+const Contents = styled.div`
+  position: relative;
+  margin-top: 5em;
+`;
+
 export const Base: FC = () => {
+  const { signInWithGithub, signOut, session } = useAuth();
   return (
     <>
       <GlobalStyle />
       <Layout>
-        <Header />
-        <BoardCanvas />
+        <Header session={session} signOut={signOut} />
+        {/* sessiionがないばあい＝ログインしていない。場合は表示しない。ログインして初めてデータ取得APIを実行する */}
+
+        <Contents>
+          {session ? (
+            <BoardCanvas />
+          ) : (
+            <Button label="GitHubでログイン" onClick={signInWithGithub} />
+          )}
+        </Contents>
       </Layout>
     </>
   );

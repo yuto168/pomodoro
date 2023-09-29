@@ -31,6 +31,7 @@ const BoardName = styled.span`
 
 export const BoardCanvas: FC = () => {
   const {
+    error,
     taskGroups,
     createTaskGroups,
     swapTaskGroups,
@@ -39,57 +40,69 @@ export const BoardCanvas: FC = () => {
     swapTasks,
     deleteTask,
     editTask,
-    saveCurrentTasks,
+    saveCurrnetTaskList,
+    deleteTaskGroup,
+    editTaskGroup,
   } = useTasks();
 
-  const [showModal, setShowModal] = useState(false);
-
+  const [showAddColumnModal, setShowAddColumnModal] = useState(false);
   // 最初のタスクのindexを計算するため。
   let index = 0;
   return (
-    <DndProvider backend={HTML5Backend}>
-      <BoardContainer>
-        <Wrapper>
-          {taskGroups!.map((taskGroup, columnIndex) => {
-            const groupedTask = tasks.filter(
-              (item) => item.groupName === taskGroup.groupName
-            );
+    <>
+      {error ? (
+        <div>error</div>
+      ) : (
+        <DndProvider backend={HTML5Backend}>
+          <BoardContainer>
+            <Wrapper>
+              {taskGroups!.map((taskGroup, columnIndex) => {
+                const groupedTask = tasks.filter(
+                  (item) => item.groupName === taskGroup.groupName
+                );
 
-            // カンバン毎に持つ最初のタスクのindex。
-            // 並び替え時にタスクの順番をカンバンをまたいで管理するため
-            const firstIndex = index;
-            index = index + groupedTask.length;
-            return (
-              <div key={taskGroup.groupName}>
-                <BoardName>{taskGroup.groupName}</BoardName>
-                <Draggable
-                  item={taskGroup}
-                  index={columnIndex}
-                  swapItems={swapTaskGroups}
-                  saveCurrentTasks={saveCurrentTasks}
-                >
-                  <Board
-                    firstIndex={firstIndex}
-                    taskList={groupedTask}
-                    groupName={taskGroup.groupName}
-                    editTask={editTask}
-                    deleteTask={deleteTask}
-                    swapTasks={swapTasks}
-                    createTask={createTask}
-                    saveCurrentTasks={saveCurrentTasks}
-                  />
-                </Draggable>
-              </div>
-            );
-          })}
-          <AddColumnButton updateShowModal={setShowModal}></AddColumnButton>
-        </Wrapper>
-      </BoardContainer>
-      <AddAColumnModal
-        showModal={showModal}
-        updateShowModal={setShowModal}
-        updateNewColumnName={createTaskGroups}
-      ></AddAColumnModal>
-    </DndProvider>
+                // カンバン毎に持つ最初のタスクのindex。
+                // 並び替え時にタスクの順番をカンバンをまたいで管理するため
+                const firstIndex = index;
+                index = index + groupedTask.length;
+                return (
+                  <div key={taskGroup.groupName}>
+                    <BoardName>{taskGroup.groupName}</BoardName>
+                    <Draggable
+                      item={taskGroup}
+                      index={columnIndex}
+                      swapItems={swapTaskGroups}
+                      saveCurrnetTaskList={saveCurrnetTaskList}
+                    >
+                      <Board
+                        firstIndex={firstIndex}
+                        taskList={groupedTask}
+                        groupName={taskGroup.groupName}
+                        editTask={editTask}
+                        deleteTask={deleteTask}
+                        swapTasks={swapTasks}
+                        createTask={createTask}
+                        saveCurrnetTaskList={saveCurrnetTaskList}
+                        currentGroup={taskGroup}
+                        deleteColumn={deleteTaskGroup}
+                        editColumn={editTaskGroup}
+                      />
+                    </Draggable>
+                  </div>
+                );
+              })}
+              <AddColumnButton
+                updateShowModal={setShowAddColumnModal}
+              ></AddColumnButton>
+            </Wrapper>
+          </BoardContainer>
+          <AddAColumnModal
+            showModal={showAddColumnModal}
+            updateShowModal={setShowAddColumnModal}
+            createTaskGroups={createTaskGroups}
+          ></AddAColumnModal>
+        </DndProvider>
+      )}
+    </>
   );
 };

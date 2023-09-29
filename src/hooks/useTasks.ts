@@ -1,13 +1,55 @@
 import { useCallback, useState, useEffect } from "react";
 import { ITEM_TYPES } from "src/typings/itemTypes";
-import { TaskItem, RawTaskList } from "src/typings/taskItem";
+import { TaskItem, MockTaskList } from "src/typings/taskItem";
 import { v4 as uuidv4 } from "uuid";
-import { useApiClient } from "src/api/useApiClient";
+import { PostgrestError } from "@supabase/supabase-js";
+import { supabase } from "src/constants/supabase";
+import { useAuth } from "src/hooks/useAuth";
 
 export const useTasks = () => {
   const [tasks, setTasks] = useState<TaskItem[]>([]);
   const [taskGroups, setTaskGroups] = useState<TaskItem[]>([]);
-  const { get, put, deleteItem } = useApiClient();
+  const [error, setError] = useState<PostgrestError | null>(null);
+  const { userID } = useAuth();
+
+  /**
+   * newTaskとtaskGroupを結合して、DB登録用のデータを作成して返す
+   *
+   * @param {TaskItem[]} newTasks : 更新後のtaskList
+   * @return {*}
+   */
+  const createPostData = useCallback(
+    (newTasks: TaskItem[], newTaskGroup: TaskItem[]) => {
+      const postData = { task: newTasks, column: newTaskGroup };
+      return postData;
+    },
+    []
+  );
+  /**
+   * taskList更新API実行
+   * @param {TaskItem[]} tasks 変更後のtaskList
+   *
+   */
+  const saveTaskList = useCallback(
+    async (newTasks: TaskItem[], newTaskGroup: TaskItem[]) => {
+      // DB登録用のデータを作成
+      const postData = createPostData(newTasks, newTaskGroup);
+      const { error } = await supabase
+        .from("gitusers")
+        .update({ task_json: postData })
+        .eq("id", userID);
+      if (error) setError(error);
+    },
+    [userID, createPostData, setError]
+  );
+
+  /**
+   * 現在のtaskListをDBに保存。drag dropによるタスクの移動時に使用
+   *
+   */
+  const saveCurrnetTaskList = useCallback(async () => {
+    saveTaskList(tasks, taskGroups);
+  }, [saveTaskList, tasks, taskGroups]);
 
   /**
    * 新規タスクの追加
@@ -15,14 +57,18 @@ export const useTasks = () => {
    * @param {number} index
    * @return {*}
    */
-  const createTask = useCallback((newTask: TaskItem, index: number) => {
-    setTasks((current) => {
-      const newTasks = [...(current ?? [])];
-      newTasks.splice(index, 0, newTask);
-      saveTaskList(newTasks);
-      return newTasks;
-    });
-  }, []);
+  const createTask = useCallback(
+    (newTask: TaskItem, index: number) => {
+      setTasks((prevTasks) => {
+        const newTasks = [...prevTasks];
+        console.log(taskGroups);
+        newTasks.splice(index, 0, newTask);
+        saveTaskList(newTasks, taskGroups);
+        return newTasks;
+      });
+    },
+    [setTasks, saveTaskList, taskGroups]
+  );
 
   /**
    * drag dropによるタスクの移動
@@ -34,13 +80,13 @@ export const useTasks = () => {
   const swapTasks = useCallback(
     (dragIndex: number, hoverIndex: number, groupName: string) => {
       setTasks((current) => {
-        const item = current[dragIndex];
-        if (!item) return current;
+        const dragItem = current[dragIndex];
+        if (!dragItem) return current;
 
         // 一旦drag対象のタスク以外の配列を作成し、
         // drag対象のタスクをdrop先のindexへ挿入する。
         const newItems = current.filter((_, index) => index !== dragIndex);
-        newItems.splice(hoverIndex, 0, { ...item, groupName });
+        newItems.splice(hoverIndex, 0, { ...dragItem, groupName });
         return newItems ? newItems : current;
       });
     },
@@ -53,33 +99,39 @@ export const useTasks = () => {
    *　@param {string} targetID 編集対象のタスクのID
    *
    */
-  const editTask = useCallback((newTaskName: string, targetID: string) => {
-    setTasks((prevState) => {
-      const newTaskList = prevState!.map((taskItem) => {
-        if (taskItem.id === targetID) {
-          taskItem.contents = newTaskName;
-        }
-        return taskItem;
+  const editTask = useCallback(
+    (newTaskName: string, targetID: string) => {
+      setTasks((current) => {
+        const newTasks = current.map((taskItem) => {
+          if (taskItem.id === targetID) {
+            taskItem.contents = newTaskName;
+          }
+          return taskItem;
+        });
+        saveTaskList(newTasks, taskGroups);
+        return newTasks;
       });
-      saveTaskList(newTaskList);
-      return newTaskList;
-    });
-  }, []);
+    },
+    [saveTaskList, taskGroups]
+  );
 
   /**
    * 指定のタスクの削除
    *　@param {string} targetID 削除対象のタスクのID
    *
    */
-  const deleteTask = useCallback((target: TaskItem) => {
-    setTasks((current) => {
-      const items = current.filter((item) => {
-        return item.id !== target.id;
+  const deleteTask = useCallback(
+    (target: TaskItem) => {
+      setTasks((current) => {
+        const newTasks = current.filter((item) => {
+          return item.id !== target.id;
+        });
+        saveTaskList(newTasks, taskGroups);
+        return newTasks;
       });
-      return items;
-    });
-    deleteSelectedTask(target.id);
-  }, []);
+    },
+    [saveTaskList, taskGroups]
+  );
 
   /**
    * 各タスクをそれぞれのグループに割り振る
@@ -100,58 +152,6 @@ export const useTasks = () => {
   }, []);
 
   /**
-   * taskList更新API実行
-   * @param {TaskItem[]} tasks 変更後のtaskList
-   *
-   */
-  const saveTaskList = async (tasks: TaskItem[]) => {
-    const result = await put<TaskItem[]>("/taskList", tasks);
-    setTasks(result.data);
-  };
-
-  const saveCurrentTasks = () => {
-    saveTaskList(tasks);
-  };
-
-  /**
-   *　taskList削除API実行
-   * @param {string} taskID 削除対象のtaskのID
-   */
-  const deleteSelectedTask = async (taskID: string) => {
-    await deleteItem("/taskList", {
-      TaskId: taskID,
-    });
-  };
-
-  /**
-   * taskList取得API実行
-   *
-   */
-  const fetchTaskList = async () => {
-    const result = await get<RawTaskList>("/tasklist");
-    const tasksAndGroups = distributeTasksToColumns(result.task);
-    setTasks(tasksAndGroups.tasks);
-    setTaskGroups(tasksAndGroups.groups);
-  };
-
-  /**
-   * 取得したデータからtaskとcolumnsの割振りを行う。
-   *
-   * @param {TaskItem[]} taskList
-   * @return {*}
-   */
-  const distributeTasksToColumns = (taskList: TaskItem[]) => {
-    return taskList.reduce(
-      (acc, current) => {
-        if (current.type === "card") acc.tasks.push(current);
-        else if (current.type === "column") acc.groups.push(current);
-        return acc;
-      },
-      { tasks: [] as TaskItem[], groups: [] as TaskItem[] }
-    );
-  };
-
-  /**
    * 新規タスクグループ作成
    * @param {string} newName
    *
@@ -165,10 +165,12 @@ export const useTasks = () => {
           contents: "",
           type: ITEM_TYPES.column,
         };
-        return [...(current ?? []), newTaskGroup];
+        const newGroups = [...current, newTaskGroup];
+        saveTaskList(tasks, newGroups);
+        return newGroups;
       });
     },
-    [setTaskGroups]
+    [setTaskGroups, saveTaskList, tasks]
   );
 
   /**
@@ -177,20 +179,88 @@ export const useTasks = () => {
    * @param {number} dropIndex drop対象のグループのindex
    *
    */
-  const swapTaskGroups = useCallback((dragIndex: number, dropIndex: number) => {
-    setTaskGroups((current) => {
-      const newTaskGroups = current.filter((_, index) => index !== dragIndex);
-      newTaskGroups.splice(dropIndex, 0, { ...current[dragIndex] });
+  const swapTaskGroups = useCallback(
+    (dragIndex: number, dropIndex: number) => {
+      setTaskGroups((current) => {
+        const newTaskGroups = current.filter((_, index) => index !== dragIndex);
+        newTaskGroups.splice(dropIndex, 0, { ...current[dragIndex] });
 
-      // タスクグループの整列完了後、各タスクをそれぞれのグループに割り振る
-      alignTasks(
-        newTaskGroups.map((taskGroup) => {
-          return taskGroup.groupName;
-        })
-      );
-      return [...newTaskGroups];
-    });
-  }, []);
+        // タスクグループの整列完了後、各タスクをそれぞれのグループに割り振る
+        alignTasks(
+          newTaskGroups.map((taskGroup) => {
+            return taskGroup.groupName;
+          })
+        );
+        return [...newTaskGroups];
+      });
+    },
+    [alignTasks]
+  );
+
+  // 指定したtaskGroupの消去。同じgroupNameのタスクも消去する
+  const deleteTaskGroup = useCallback(
+    (target: TaskItem) => {
+      let newTaskGroups = taskGroups.filter((item) => {
+        return item.id !== target.id;
+      });
+
+      let newTasks = tasks.filter((item) => {
+        return item.groupName !== target.groupName;
+      });
+
+      setTaskGroups(newTaskGroups);
+      setTasks(newTasks);
+
+      saveTaskList(newTasks, newTaskGroups);
+    },
+    [saveTaskList, taskGroups, tasks]
+  );
+
+  // groupの名前を編集する
+  const editTaskGroup = useCallback(
+    (newGroupName: string, targetID: string) => {
+      setTaskGroups((current) => {
+        // 変更対象のタスクグループの名前を取得
+        const targetGroupName = current.find((taskGroup) => {
+          return taskGroup.id === targetID;
+        })?.groupName;
+
+        // 名前を変更し、前の名前のタスクを新しいカラムのタスクに変更する
+        const newTaskGroups = current.map((taskGroup) =>
+          taskGroup.id === targetID
+            ? { ...taskGroup, groupName: newGroupName }
+            : taskGroup
+        );
+
+        // 変更対象のタスクグループに属するタスクのgroupNameを変更する
+        const newTasks = tasks.map((task) =>
+          task.groupName === targetGroupName
+            ? { ...task, groupName: newGroupName }
+            : task
+        );
+        setTasks(newTasks);
+        saveTaskList(newTasks, newTaskGroups);
+        return newTaskGroups;
+      });
+    },
+    [saveTaskList, tasks]
+  );
+
+  /**
+   * taskList取得API
+   *
+   */
+  const fetchTaskList = async () => {
+    // supabaseのrlsでログインIDと一致するテーブルを取得するように設定している
+    const { data, error } = await supabase.from("gitusers").select("task_json");
+    if (error) {
+      setError(error);
+      return;
+    }
+    const tasklist = data[0].task_json as MockTaskList;
+    setTasks(tasklist.task);
+    setTaskGroups(tasklist.column);
+  };
 
   // 初回ローディング
   useEffect(() => {
@@ -198,6 +268,7 @@ export const useTasks = () => {
   }, []);
 
   return {
+    error,
     taskGroups,
     createTaskGroups,
     swapTaskGroups,
@@ -206,6 +277,8 @@ export const useTasks = () => {
     swapTasks,
     deleteTask,
     editTask,
-    saveCurrentTasks,
+    saveCurrnetTaskList,
+    deleteTaskGroup,
+    editTaskGroup,
   };
 };
