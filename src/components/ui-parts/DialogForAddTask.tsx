@@ -28,6 +28,7 @@ export const DialogForAddTask: FC<Props> = (props) => {
                 groupName: props.groupName,
                 contents: newTaskName,
                 type: ITEM_TYPES.card,
+                focusTime: 0,
               },
               props.index
             );

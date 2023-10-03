@@ -26,12 +26,17 @@ type Props = {
   saveCurrnetTaskList: () => void;
   deleteColumn: (target: TaskItem) => void;
   editColumn: (newGroupName: string, targetID: string) => void;
+  setSelectedTask: (task: TaskItem) => void;
+  setActiveIndex: (index: number) => void;
 };
 
 const BoardFooter = styled.div`
+  display: flex;
+  align-items: center;
   border: none;
   cursor: pointer;
   margin: 2px;
+  padding-left: 0.3rem;
   height: ${layouts.boardFooterHeight}px;
   color: #ffffff;
   &:hover {
@@ -95,6 +100,8 @@ export const Board: FC<Props> = (props) => {
                   task={taskItem}
                   deleteTask={props.deleteTask}
                   editTask={props.editTask}
+                  setSelectedTask={props.setSelectedTask}
+                  setActiveIndex={props.setActiveIndex}
                 />
               </Draggable>
             </div>

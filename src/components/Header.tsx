@@ -39,14 +39,16 @@ const ButtonContents = styled.div`
 export const Header: React.FC<Props> = ({ session, signOut }) => {
   return (
     <BoardHeader>
-      <Title>React Kanban</Title>
-      <ButtonContents
-        onClick={() => {
-          signOut();
-        }}
-      >
-        <span>ログアウト</span>
-      </ButtonContents>
+      <Title>React Kanban*Pomodoro</Title>
+      {session && (
+        <ButtonContents
+          onClick={() => {
+            signOut();
+          }}
+        >
+          <span>ログアウト</span>
+        </ButtonContents>
+      )}
     </BoardHeader>
   );
 };
