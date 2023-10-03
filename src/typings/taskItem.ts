@@ -5,6 +5,7 @@ export type TaskItem = {
   groupName: string;
   contents: string;
   type: keyof ItemTypes;
+  focusTime: number;
 };
 
 export type MockTaskList = {

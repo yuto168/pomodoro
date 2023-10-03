@@ -4,6 +4,7 @@ import { Button } from "primereact/button";
 import { useAuth } from "src/hooks/useAuth";
 import styled, { createGlobalStyle } from "styled-components";
 import { FC } from "react";
+import { AiFillGithub } from "react-icons/ai";
 
 const GlobalStyle = createGlobalStyle`
   html {
@@ -16,17 +17,34 @@ const GlobalStyle = createGlobalStyle`
     background-attachment: fixed;
     background-size: cover;
     background-position: center center;
+    padding: 1%;
   }
 `;
 const Layout = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
+  height: 100vh;
 `;
 
 const Contents = styled.div`
   position: relative;
-  margin-top: 5em;
+  margin-top: 2rem;
+`;
+
+// 画面上下左右中央に表示するためのボタン
+const SinginButton = styled(Button)`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-sizing: content-box;
+  background-color: #272b33;
+`;
+
+const GitHubIcon = styled(AiFillGithub)`
+  margin-right: 5px;
+  font-size: 1.5em;
 `;
 
 export const Base: FC = () => {
@@ -36,15 +54,15 @@ export const Base: FC = () => {
       <GlobalStyle />
       <Layout>
         <Header session={session} signOut={signOut} />
-        {/* sessiionがないばあい＝ログインしていない。場合は表示しない。ログインして初めてデータ取得APIを実行する */}
-
-        <Contents>
-          {session ? (
-            <BoardCanvas />
-          ) : (
-            <Button label="GitHubでログイン" onClick={signInWithGithub} />
-          )}
-        </Contents>
+        <Contents>{session ? <BoardCanvas /> : null}</Contents>
+        {!session && (
+          <>
+            <SinginButton onClick={signInWithGithub}>
+              <GitHubIcon />
+              GitHubでログイン
+            </SinginButton>
+          </>
+        )}
       </Layout>
     </>
   );

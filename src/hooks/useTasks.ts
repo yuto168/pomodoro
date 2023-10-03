@@ -8,6 +8,7 @@ import { useAuth } from "src/hooks/useAuth";
 
 export const useTasks = () => {
   const [tasks, setTasks] = useState<TaskItem[]>([]);
+  const [selectedTask, setSelectedTask] = useState<TaskItem | null>(null);
   const [taskGroups, setTaskGroups] = useState<TaskItem[]>([]);
   const [error, setError] = useState<PostgrestError | null>(null);
   const { userID } = useAuth();
@@ -34,6 +35,11 @@ export const useTasks = () => {
     async (newTasks: TaskItem[], newTaskGroup: TaskItem[]) => {
       // DB登録用のデータを作成
       const postData = createPostData(newTasks, newTaskGroup);
+
+      // 選択中のタスクを変更する
+      if (newTasks.length > 0) setSelectedTask(newTasks[0]);
+      else setSelectedTask(null);
+
       const { error } = await supabase
         .from("gitusers")
         .update({ task_json: postData })
@@ -61,7 +67,6 @@ export const useTasks = () => {
     (newTask: TaskItem, index: number) => {
       setTasks((prevTasks) => {
         const newTasks = [...prevTasks];
-        console.log(taskGroups);
         newTasks.splice(index, 0, newTask);
         saveTaskList(newTasks, taskGroups);
         return newTasks;
@@ -91,6 +96,26 @@ export const useTasks = () => {
       });
     },
     []
+  );
+
+  // タスクのタイマーを更新する
+  const updateTaskTimer = useCallback(
+    (targetID: string, focusTime: number) => {
+      console.log("updateTaskTimer");
+      console.log(focusTime);
+
+      setTasks((current) => {
+        const newTasks = current.map((taskItem) => {
+          if (taskItem.id === targetID) {
+            taskItem.focusTime += focusTime;
+          }
+          return taskItem;
+        });
+        saveTaskList(newTasks, taskGroups);
+        return newTasks;
+      });
+    },
+    [saveTaskList, taskGroups]
   );
 
   /**
@@ -164,6 +189,7 @@ export const useTasks = () => {
           groupName: newName,
           contents: "",
           type: ITEM_TYPES.column,
+          focusTime: 0,
         };
         const newGroups = [...current, newTaskGroup];
         saveTaskList(tasks, newGroups);
@@ -258,6 +284,9 @@ export const useTasks = () => {
       return;
     }
     const tasklist = data[0].task_json as MockTaskList;
+
+    // taskが一つでもあれば、最初のタスクを選択状態にする
+    if (tasklist.task.length > 0) setSelectedTask(tasklist.task[0]);
     setTasks(tasklist.task);
     setTaskGroups(tasklist.column);
   };
@@ -269,6 +298,7 @@ export const useTasks = () => {
 
   return {
     error,
+    setError,
     taskGroups,
     createTaskGroups,
     swapTaskGroups,
@@ -278,7 +308,10 @@ export const useTasks = () => {
     deleteTask,
     editTask,
     saveCurrnetTaskList,
+    updateTaskTimer,
     deleteTaskGroup,
     editTaskGroup,
+    selectedTask,
+    setSelectedTask,
   };
 };

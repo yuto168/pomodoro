@@ -22,14 +22,14 @@ export const DialogForEdit: FC<Props> = (props) => {
           onClick={() => {
             props.editTask(newTaskName, props.taskID);
             props.setShowModal(false);
-            setNewTaskName("");
+            setNewTaskName(newTaskName);
           }}
         ></Button>
         <Button
           label="No"
           onClick={() => {
             props.setShowModal(false);
-            setNewTaskName("");
+            setNewTaskName(props.taskName);
           }}
         ></Button>
       </>
