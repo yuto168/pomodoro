@@ -2,6 +2,7 @@ import { FC } from "react";
 import { DraggableItem, Card, Column } from "../typings/taskItem";
 import { useDrag, useDrop } from "react-dnd";
 import { useRef } from "react";
+import { debounce } from "lodash";
 
 type Props = {
   item: Card | Column;
@@ -45,8 +46,12 @@ export const Draggable: FC<Props> = ({
         if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY * 1.5) return;
       }
 
-      swapItems(dragIndex, hoverIndex, item.groupName);
-
+      // debounceで高頻度での並び替えを防ぐ
+      const debounceSwapItems = debounce(
+        () => swapItems(dragIndex, hoverIndex, item.groupName),
+        100
+      );
+      debounceSwapItems();
       dragItem.index = hoverIndex;
       dragItem.groupName = item.groupName;
     },
