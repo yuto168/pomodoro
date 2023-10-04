@@ -132,7 +132,6 @@ export const BoardCanvas: FC = () => {
           <TabPanel header="Pomodoro">
             <Pomodoro
               tasks={tasks}
-              taskGroups={taskGroups}
               selectedTask={selectedTask}
               setSelectedTask={setSelectedTask}
               updateTaskTimer={updateTaskTimer}
