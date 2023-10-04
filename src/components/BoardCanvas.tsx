@@ -71,7 +71,7 @@ export const BoardCanvas: FC = () => {
   // TODO: 環境変数の確認
   console.log(process.env.REACT_APP_SUPABASE_URL);
   console.log(process.env.REACT_APP_SUPABASE_KEY);
-  console.log(process.env.REACT_APP_API_URL);
+  console.log(process.env.REACT_APP_URL);
 
   return (
     <>
