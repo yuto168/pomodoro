@@ -68,11 +68,6 @@ export const BoardCanvas: FC = () => {
   // 最初のタスクのindexを計算するため。
   let index = 0;
 
-  // TODO: 環境変数の確認
-  console.log(process.env.REACT_APP_SUPABASE_URL);
-  console.log(process.env.REACT_APP_SUPABASE_KEY);
-  console.log(process.env.REACT_APP_URL);
-
   return (
     <>
       {error ? (
