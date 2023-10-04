@@ -11,7 +11,6 @@ import { GlassItem } from "src/components/ui-parts/GlassItem";
 
 type Props = {
   tasks: TaskItem[];
-  taskGroups: TaskItem[];
   updateTaskTimer: (targetID: string, focusTime: number) => void;
   selectedTask: TaskItem | null;
   setSelectedTask: (task: TaskItem) => void;
@@ -91,7 +90,6 @@ const ModeWrapper = styled.div`
 
 export const Pomodoro: FC<Props> = ({
   tasks,
-  taskGroups,
   selectedTask,
   setSelectedTask,
   updateTaskTimer,
@@ -100,13 +98,12 @@ export const Pomodoro: FC<Props> = ({
     mode,
     switchMode,
     minutes,
-    focusTime,
     isPaused,
     formattedSeconds,
     handlePause,
     handleStart,
     resetTimer,
-  } = useTimer();
+  } = useTimer(selectedTask, updateTaskTimer);
 
   const grouped = tasks.reduce((acc: Record<string, TaskItem[]>, taskItem) => {
     if (!acc[taskItem.groupName]) {
@@ -174,11 +171,6 @@ export const Pomodoro: FC<Props> = ({
             <PauseButton
               onClick={() => {
                 handlePause();
-                // 集中した時間でタスクの時間を更新
-                if (selectedTask) {
-                  const newFocusTime = focusTime;
-                  updateTaskTimer(selectedTask.id, newFocusTime);
-                }
               }}
             />
           )}

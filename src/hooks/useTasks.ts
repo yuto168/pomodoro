@@ -36,10 +36,6 @@ export const useTasks = () => {
       // DB登録用のデータを作成
       const postData = createPostData(newTasks, newTaskGroup);
 
-      // 選択中のタスクを変更する
-      if (newTasks.length > 0) setSelectedTask(newTasks[0]);
-      else setSelectedTask(null);
-
       const { error } = await supabase
         .from("gitusers")
         .update({ task_json: postData })
@@ -68,11 +64,15 @@ export const useTasks = () => {
       setTasks((prevTasks) => {
         const newTasks = [...prevTasks];
         newTasks.splice(index, 0, newTask);
+
+        //　選択状態のタスクが存在しない場合は、新規タスクを選択状態にする
+        if (!selectedTask) setSelectedTask(newTask);
+
         saveTaskList(newTasks, taskGroups);
         return newTasks;
       });
     },
-    [setTasks, saveTaskList, taskGroups]
+    [setTasks, saveTaskList, taskGroups, selectedTask]
   );
 
   /**
@@ -101,9 +101,6 @@ export const useTasks = () => {
   // タスクのタイマーを更新する
   const updateTaskTimer = useCallback(
     (targetID: string, focusTime: number) => {
-      console.log("updateTaskTimer");
-      console.log(focusTime);
-
       setTasks((current) => {
         const newTasks = current.map((taskItem) => {
           if (taskItem.id === targetID) {
@@ -151,11 +148,16 @@ export const useTasks = () => {
         const newTasks = current.filter((item) => {
           return item.id !== target.id;
         });
+        // 削除対象のタスクが選択状態であれば、別のタスクを選択状態にする
+        if (selectedTask?.id === target.id) {
+          // 他にもタスクがあれば、最初のタスクを選択状態にする
+          if (newTasks.length > 0) setSelectedTask(newTasks[0]);
+        }
         saveTaskList(newTasks, taskGroups);
         return newTasks;
       });
     },
-    [saveTaskList, taskGroups]
+    [saveTaskList, taskGroups, selectedTask]
   );
 
   /**
@@ -234,12 +236,18 @@ export const useTasks = () => {
         return item.groupName !== target.groupName;
       });
 
+      // 削除対象のタスクが選択状態であれば、別のタスクを選択状態にする
+      if (selectedTask?.groupName === target.groupName) {
+        // 他にもタスクがあれば、最初のタスクを選択状態にする
+        if (newTasks.length > 0) setSelectedTask(newTasks[0]);
+      }
+
       setTaskGroups(newTaskGroups);
       setTasks(newTasks);
 
       saveTaskList(newTasks, newTaskGroups);
     },
-    [saveTaskList, taskGroups, tasks]
+    [saveTaskList, taskGroups, tasks, selectedTask]
   );
 
   // groupの名前を編集する

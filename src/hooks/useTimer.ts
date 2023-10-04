@@ -1,21 +1,23 @@
 import { useState, useEffect, useRef, useMemo } from "react";
-import { useTasks } from "./useTasks";
+import { TaskItem } from "src/typings/taskItem";
 
-export const useTimer = () => {
+export const useTimer = (
+  selectedTask: TaskItem | null,
+  updateTaskTimer: (targetID: string, focusTime: number) => void
+) => {
   const focusInterval = 25 * 60;
   const breakInterval = 5 * 60;
+
+  // 一時停止した時点での残り時間
   const [isPaused, setIsPaused] = useState(true);
   const [mode, setMode] = useState("Focus");
   const [secoundLeft, setSecondLeft] = useState(focusInterval);
-
-  const { updateTaskTimer, selectedTask } = useTasks();
 
   // useRefを使うことで、再レンダリングしても値が変わらないようにする
   const pauseRef = useRef(isPaused);
   const modeRef = useRef(mode);
   const secoundLeftRef = useRef(secoundLeft);
-  // インターバルのうち、集中した時間
-  const focusTime = focusInterval - secoundLeftRef.current;
+  const focusedTime = useRef(0);
 
   const minutes = Math.floor(secoundLeft / 60);
   const seconds = secoundLeft % 60;
@@ -28,6 +30,11 @@ export const useTimer = () => {
   const tick = () => {
     setSecondLeft((prev) => prev - 1);
     secoundLeftRef.current = secoundLeftRef.current - 1;
+
+    // focus状態の時に、集中時間を更新する
+    if (modeRef.current === "Focus") {
+      focusedTime.current = focusedTime.current + 1;
+    }
   };
 
   // モードを切り替える
@@ -40,6 +47,8 @@ export const useTimer = () => {
   // タイマーをリセットする
   const resetTimer = () => {
     handlePause();
+    focusedTime.current = 0;
+
     setMode("Focus");
     modeRef.current = "Focus";
 
@@ -59,13 +68,18 @@ export const useTimer = () => {
       if (pauseRef.current) return;
       if (secoundLeftRef.current === 0) {
         // focusからbreakに切り替わったら、集中時間を更新する。
-        if (modeRef.current === "Focus" && selectedTask && focusTime > 0)
-          updateTaskTimer(selectedTask.id, focusInterval);
+        if (
+          modeRef.current === "Focus" &&
+          selectedTask &&
+          focusedTime.current > 0
+        ) {
+          updateTaskTimer(selectedTask.id, focusedTime.current);
+        }
         return switchMode();
       }
       tick();
       // TODO: 一時的にタイマーの速度を早くしている
-    }, 5);
+    }, 1);
 
     return () => {
       clearInterval(interval);
@@ -75,6 +89,7 @@ export const useTimer = () => {
   // モードが変更されたら残り時間を更新する
   useEffect(() => {
     const newTime = mode === "Focus" ? focusInterval : breakInterval;
+    focusedTime.current = 0;
     setSecondLeft(newTime);
     secoundLeftRef.current = newTime;
   }, [mode]);
@@ -83,6 +98,12 @@ export const useTimer = () => {
   const handlePause = () => {
     setIsPaused(true);
     pauseRef.current = true;
+
+    // 集中した時間でタスクの時間を更新
+    if (selectedTask) updateTaskTimer(selectedTask.id, focusedTime.current);
+
+    // 一時停止した時点でfocusTimeを初期化する
+    focusedTime.current = 0;
   };
 
   // タイマーを開始する
@@ -99,7 +120,7 @@ export const useTimer = () => {
     breakInterval,
     focusInterval,
     secoundLeft,
-    focusTime,
+    focusTime: focusedTime.current,
     setMode,
     minutes,
     formattedSeconds,
