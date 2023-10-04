@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 import { AutoComplete } from "primereact/autocomplete";
 import { Button } from "primereact/button";
 import { TaskItem } from "src/typings/taskItem";
-import { ITEM_TYPES } from "src/typings/itemTypes";
+import { ITEM_TYPES } from "src/typings/taskItem";
 import { GlassDialog } from "./GlassDialog";
 
 type Props = {

@@ -6,7 +6,7 @@ import { DialogForAddTask } from "./ui-parts/DialogForAddTask";
 import { useDrop } from "react-dnd";
 import { Draggable } from "./Draggable";
 import { TaskItem, TaskItemWithIndex } from "src/typings/taskItem";
-import { ITEM_TYPES } from "src/typings/itemTypes";
+import { ITEM_TYPES } from "src/typings/taskItem";
 import layouts from "src/constants/layouts";
 import { ContextMenu } from "primereact/contextmenu";
 import { GlassBoard } from "./ui-parts/GlassBoard";

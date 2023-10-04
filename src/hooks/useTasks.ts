@@ -1,6 +1,6 @@
 import { useCallback, useState, useEffect } from "react";
-import { ITEM_TYPES } from "src/typings/itemTypes";
-import { TaskItem, MockTaskList } from "src/typings/taskItem";
+import { ITEM_TYPES } from "src/typings/taskItem";
+import { TaskItem, TaskItemFromAPI } from "src/typings/taskItem";
 import { v4 as uuidv4 } from "uuid";
 import { PostgrestError } from "@supabase/supabase-js";
 import { supabase } from "src/constants/supabase";
@@ -291,7 +291,7 @@ export const useTasks = () => {
       setError(error);
       return;
     }
-    const tasklist = data[0].task_json as MockTaskList;
+    const tasklist = data[0].task_json as TaskItemFromAPI;
 
     // taskが一つでもあれば、最初のタスクを選択状態にする
     if (tasklist.task.length > 0) setSelectedTask(tasklist.task[0]);
