@@ -5,8 +5,7 @@ import { IoIosAdd } from "react-icons/io";
 import { DialogForAddTask } from "./ui-parts/DialogForAddTask";
 import { useDrop } from "react-dnd";
 import { Draggable } from "./Draggable";
-import { TaskItem, TaskItemWithIndex } from "src/typings/taskItem";
-import { ITEM_TYPES } from "src/typings/itemTypes";
+import { DraggableItem, Card, Column, ITEM_TYPES } from "src/typings/taskItem";
 import layouts from "src/constants/layouts";
 import { ContextMenu } from "primereact/contextmenu";
 import { GlassBoard } from "./ui-parts/GlassBoard";
@@ -17,16 +16,16 @@ type Props = {
   isOver?: any;
   firstIndex: number;
   groupName: string;
-  currentGroup: TaskItem;
-  taskList: TaskItem[];
-  createTask: (newTask: TaskItem, index: number) => void;
-  deleteTask: (target: TaskItem) => void;
+  currentGroup: Column;
+  taskList: Card[];
+  createTask: (newTask: Card, index: number) => void;
+  deleteTask: (target: Card) => void;
   editTask: (newTaskName: string, taskID: string) => void;
   swapTasks: (dragIndex: number, hoverIndex: number, groupName: string) => void;
   saveCurrnetTaskList: () => void;
-  deleteColumn: (target: TaskItem) => void;
+  deleteColumn: (target: Column) => void;
   editColumn: (newGroupName: string, targetID: string) => void;
-  setSelectedTask: (task: TaskItem) => void;
+  setSelectedTask: (task: Card) => void;
   setActiveIndex: (index: number) => void;
 };
 
@@ -63,7 +62,7 @@ export const Board: FC<Props> = (props) => {
 
   const [_, drop] = useDrop(() => ({
     accept: ITEM_TYPES.card,
-    hover(dragItem: TaskItemWithIndex) {
+    hover(dragItem: DraggableItem) {
       if (dragItem.groupName === props.groupName) return;
       const dragIndex = dragItem.index;
       const targetIndex =

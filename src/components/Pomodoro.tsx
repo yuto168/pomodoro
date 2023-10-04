@@ -4,16 +4,16 @@ import "react-circular-progressbar/dist/styles.css";
 import { AiFillPlayCircle } from "react-icons/ai";
 import { AiOutlinePauseCircle } from "react-icons/ai";
 import { VscDebugRestart } from "react-icons/vsc";
-import { TaskItem } from "src/typings/taskItem";
+import { Card } from "src/typings/taskItem";
 import { Dropdown } from "primereact/dropdown";
 import { useTimer } from "src/hooks/useTimer";
 import { GlassItem } from "src/components/ui-parts/GlassItem";
 
 type Props = {
-  tasks: TaskItem[];
+  tasks: Card[];
   updateTaskTimer: (targetID: string, focusTime: number) => void;
-  selectedTask: TaskItem | null;
-  setSelectedTask: (task: TaskItem) => void;
+  selectedTask: Card | null;
+  setSelectedTask: (task: Card) => void;
 };
 
 const PlayButton = styled(AiFillPlayCircle)`
@@ -105,7 +105,7 @@ export const Pomodoro: FC<Props> = ({
     resetTimer,
   } = useTimer(selectedTask, updateTaskTimer);
 
-  const grouped = tasks.reduce((acc: Record<string, TaskItem[]>, taskItem) => {
+  const grouped = tasks.reduce((acc: Record<string, Card[]>, taskItem) => {
     if (!acc[taskItem.groupName]) {
       acc[taskItem.groupName] = [];
     }

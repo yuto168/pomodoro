@@ -1,16 +1,31 @@
-import { ItemTypes } from "./itemTypes";
+// タスクの種別を定義
+export const ITEM_TYPES = {
+  card: "card",
+  column: "column",
+} as const;
 
-export type TaskItem = {
+export type ItemTypes = typeof ITEM_TYPES;
+
+// カラムの型定義
+export type Column = {
   id: string;
   groupName: string;
-  contents: string;
   type: keyof ItemTypes;
+};
+
+// カードの型定義
+export type Card = Column & {
+  contents: string;
   focusTime: number;
 };
 
-export type MockTaskList = {
-  task: TaskItem[];
-  column: TaskItem[];
-};
+// Drag Drop対象の型定義
+export type DraggableItem =
+  | (Column & { index: number })
+  | (Card & { index: number });
 
-export type TaskItemWithIndex = TaskItem & { index: number };
+// APIから取得したタスク情報の型定義
+export type TaskItemFromAPI = {
+  task: Card[];
+  column: Column[];
+};

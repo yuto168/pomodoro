@@ -1,10 +1,11 @@
 import { FC } from "react";
-import { TaskItem, TaskItemWithIndex } from "../typings/taskItem";
+import { DraggableItem, Card, Column } from "../typings/taskItem";
 import { useDrag, useDrop } from "react-dnd";
 import { useRef } from "react";
+import { debounce } from "lodash";
 
 type Props = {
-  item: TaskItem;
+  item: Card | Column;
   index: number;
   swapItems: (dragIndex: number, hoverIndex: number, groupName: string) => void;
   saveCurrnetTaskList: () => void;
@@ -26,7 +27,7 @@ export const Draggable: FC<Props> = ({
       // drop完了時にタスク更新を行う。
       saveCurrnetTaskList();
     },
-    hover(dragItem: TaskItemWithIndex, monitor) {
+    hover(dragItem: DraggableItem, monitor) {
       if (!ref.current) return;
       const dragIndex = dragItem.index;
       const hoverIndex = index;
@@ -45,8 +46,12 @@ export const Draggable: FC<Props> = ({
         if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY * 1.5) return;
       }
 
-      swapItems(dragIndex, hoverIndex, item.groupName);
-
+      // debounceで高頻度での並び替えを防ぐ
+      const debounceSwapItems = debounce(
+        () => swapItems(dragIndex, hoverIndex, item.groupName),
+        100
+      );
+      debounceSwapItems();
       dragItem.index = hoverIndex;
       dragItem.groupName = item.groupName;
     },

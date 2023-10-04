@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef, useMemo } from "react";
-import { TaskItem } from "src/typings/taskItem";
+import { Card } from "src/typings/taskItem";
 
 export const useTimer = (
-  selectedTask: TaskItem | null,
+  selectedTask: Card | null,
   updateTaskTimer: (targetID: string, focusTime: number) => void
 ) => {
   const focusInterval = 25 * 60;

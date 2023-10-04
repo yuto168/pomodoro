@@ -1,13 +1,13 @@
 import { FC } from "react";
 import styled from "styled-components";
 import "react-circular-progressbar/dist/styles.css";
-import { TaskItem } from "src/typings/taskItem";
+import { Card } from "src/typings/taskItem";
 import { GiTomato } from "react-icons/gi";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 
 type Props = {
-  tasks: TaskItem[];
+  tasks: Card[];
 };
 
 const PomodoroIcon = styled(GiTomato)`
@@ -29,17 +29,17 @@ const StyledDataTable = styled(DataTable)`
 
 export const History: FC<Props> = ({ tasks }) => {
   //ポモドーロの数を計算する関数
-  const totalPomodoro = (task: TaskItem) => {
+  const totalPomodoro = (task: Card) => {
     const pomodoro = task.focusTime / (60 * 25); //1ポモドーロ25分;
     const pomodoroArray = [];
 
-    for (let i = 1; i < pomodoro; i++) {
+    for (let i = 1; i <= pomodoro; i++) {
       pomodoroArray.push(<PomodoroIcon key={i} />);
     }
     return pomodoroArray;
   };
 
-  const formattedFocusTime = (task: TaskItem) => {
+  const formattedFocusTime = (task: Card) => {
     const minutes = Math.floor(task.focusTime / 60);
     return <span>{minutes}</span>;
   };

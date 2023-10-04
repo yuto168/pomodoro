@@ -2,13 +2,12 @@ import { useState, FC } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { AutoComplete } from "primereact/autocomplete";
 import { Button } from "primereact/button";
-import { TaskItem } from "src/typings/taskItem";
-import { ITEM_TYPES } from "src/typings/itemTypes";
+import { Card, ITEM_TYPES } from "src/typings/taskItem";
 import { GlassDialog } from "./GlassDialog";
 
 type Props = {
   index: number;
-  createTask: (newTask: TaskItem, index: number) => void;
+  createTask: (newTask: Card, index: number) => void;
   showModal: boolean;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
   groupName: string;
