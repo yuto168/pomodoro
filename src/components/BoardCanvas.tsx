@@ -67,6 +67,12 @@ export const BoardCanvas: FC = () => {
   const [showAddColumnModal, setShowAddColumnModal] = useState(false);
   // 最初のタスクのindexを計算するため。
   let index = 0;
+
+  // TODO: 環境変数の確認
+  console.log(process.env.REACT_APP_SUPABASE_URL);
+  console.log(process.env.REACT_APP_SUPABASE_KEY);
+  console.log(process.env.REACT_APP_API_URL);
+
   return (
     <>
       {error ? (
