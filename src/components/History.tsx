@@ -33,7 +33,7 @@ export const History: FC<Props> = ({ tasks }) => {
     const pomodoro = task.focusTime / (60 * 25); //1ポモドーロ25分;
     const pomodoroArray = [];
 
-    for (let i = 1; i < pomodoro; i++) {
+    for (let i = 1; i <= pomodoro; i++) {
       pomodoroArray.push(<PomodoroIcon key={i} />);
     }
     return pomodoroArray;
