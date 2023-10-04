@@ -6,32 +6,26 @@ export const ITEM_TYPES = {
 
 export type ItemTypes = typeof ITEM_TYPES;
 
+// カラムの型定義
 export type Column = {
   id: string;
   groupName: string;
   type: keyof ItemTypes;
 };
 
+// カードの型定義
 export type Card = Column & {
   contents: string;
   focusTime: number;
 };
 
+// Drag Drop対象の型定義
 export type DraggableItem =
   | (Column & { index: number })
   | (Card & { index: number });
 
-// タスクの型定義
-export type TaskItem = {
-  id: string;
-  groupName: string;
-  contents: string;
-  type: keyof ItemTypes;
-  focusTime: number;
-};
-
 // APIから取得したタスク情報の型定義
 export type TaskItemFromAPI = {
-  task: TaskItem[];
-  column: TaskItem[];
+  task: Card[];
+  column: Column[];
 };

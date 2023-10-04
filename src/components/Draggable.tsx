@@ -1,10 +1,10 @@
 import { FC } from "react";
-import { TaskItem, DraggableItem } from "../typings/taskItem";
+import { DraggableItem, Card, Column } from "../typings/taskItem";
 import { useDrag, useDrop } from "react-dnd";
 import { useRef } from "react";
 
 type Props = {
-  item: TaskItem;
+  item: Card | Column;
   index: number;
   swapItems: (dragIndex: number, hoverIndex: number, groupName: string) => void;
   saveCurrnetTaskList: () => void;

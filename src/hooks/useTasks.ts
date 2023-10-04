@@ -1,6 +1,6 @@
 import { useCallback, useState, useEffect } from "react";
 import { ITEM_TYPES } from "src/typings/taskItem";
-import { TaskItem, TaskItemFromAPI, Card, Column } from "src/typings/taskItem";
+import { TaskItemFromAPI, Card, Column } from "src/typings/taskItem";
 import { v4 as uuidv4 } from "uuid";
 import { PostgrestError } from "@supabase/supabase-js";
 import { supabase } from "src/constants/supabase";
@@ -8,8 +8,8 @@ import { useAuth } from "src/hooks/useAuth";
 
 export const useTasks = () => {
   const [tasks, setTasks] = useState<Card[]>([]);
-  const [selectedTask, setSelectedTask] = useState<TaskItem | null>(null);
-  const [taskGroups, setTaskGroups] = useState<Card[]>([]);
+  const [selectedTask, setSelectedTask] = useState<Card | null>(null);
+  const [taskGroups, setTaskGroups] = useState<Column[]>([]);
   const [error, setError] = useState<PostgrestError | null>(null);
   const { userID } = useAuth();
 
@@ -20,7 +20,7 @@ export const useTasks = () => {
    * @return {*}
    */
   const createPostData = useCallback(
-    (newTasks: Card[], newTaskGroup: TaskItem[]) => {
+    (newTasks: Card[], newTaskGroup: Column[]) => {
       const postData = { task: newTasks, column: newTaskGroup };
       return postData;
     },
@@ -32,7 +32,7 @@ export const useTasks = () => {
    *
    */
   const saveTaskList = useCallback(
-    async (newTasks: Card[], newTaskGroup: TaskItem[]) => {
+    async (newTasks: Card[], newTaskGroup: Column[]) => {
       // DB登録用のデータを作成
       const postData = createPostData(newTasks, newTaskGroup);
 
@@ -143,7 +143,7 @@ export const useTasks = () => {
    *
    */
   const deleteTask = useCallback(
-    (target: TaskItem) => {
+    (target: Card) => {
       setTasks((current) => {
         const newTasks = current.filter((item) => {
           return item.id !== target.id;
@@ -189,9 +189,7 @@ export const useTasks = () => {
         const newTaskGroup = {
           id: uuidv4(),
           groupName: newName,
-          contents: "",
           type: ITEM_TYPES.column,
-          focusTime: 0,
         };
         const newGroups = [...current, newTaskGroup];
         saveTaskList(tasks, newGroups);
@@ -227,7 +225,7 @@ export const useTasks = () => {
 
   // 指定したtaskGroupの消去。同じgroupNameのタスクも消去する
   const deleteTaskGroup = useCallback(
-    (target: TaskItem) => {
+    (target: Column) => {
       let newTaskGroups = taskGroups.filter((item) => {
         return item.id !== target.id;
       });
