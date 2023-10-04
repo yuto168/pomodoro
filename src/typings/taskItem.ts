@@ -1,4 +1,3 @@
-import { Draggable } from "../components/Draggable";
 // タスクの種別を定義
 export const ITEM_TYPES = {
   card: "card",
@@ -18,7 +17,9 @@ export type Card = Column & {
   focusTime: number;
 };
 
-type DraggableItem = (Column & { index: number }) | (Card & { index: number });
+export type DraggableItem =
+  | (Column & { index: number })
+  | (Card & { index: number });
 
 // タスクの型定義
 export type TaskItem = {
@@ -34,6 +35,3 @@ export type TaskItemFromAPI = {
   task: TaskItem[];
   column: TaskItem[];
 };
-
-// drag dropによるタスクの順番入れ替え用の型定義
-export type TaskItemWithIndex = TaskItem & { index: number };

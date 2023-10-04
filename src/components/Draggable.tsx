@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { TaskItem, TaskItemWithIndex } from "../typings/taskItem";
+import { TaskItem, DraggableItem } from "../typings/taskItem";
 import { useDrag, useDrop } from "react-dnd";
 import { useRef } from "react";
 
@@ -26,7 +26,7 @@ export const Draggable: FC<Props> = ({
       // drop完了時にタスク更新を行う。
       saveCurrnetTaskList();
     },
-    hover(dragItem: TaskItemWithIndex, monitor) {
+    hover(dragItem: DraggableItem, monitor) {
       if (!ref.current) return;
       const dragIndex = dragItem.index;
       const hoverIndex = index;

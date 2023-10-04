@@ -1,26 +1,26 @@
 import { useCallback, useState, useEffect } from "react";
 import { ITEM_TYPES } from "src/typings/taskItem";
-import { TaskItem, TaskItemFromAPI } from "src/typings/taskItem";
+import { TaskItem, TaskItemFromAPI, Card, Column } from "src/typings/taskItem";
 import { v4 as uuidv4 } from "uuid";
 import { PostgrestError } from "@supabase/supabase-js";
 import { supabase } from "src/constants/supabase";
 import { useAuth } from "src/hooks/useAuth";
 
 export const useTasks = () => {
-  const [tasks, setTasks] = useState<TaskItem[]>([]);
+  const [tasks, setTasks] = useState<Card[]>([]);
   const [selectedTask, setSelectedTask] = useState<TaskItem | null>(null);
-  const [taskGroups, setTaskGroups] = useState<TaskItem[]>([]);
+  const [taskGroups, setTaskGroups] = useState<Card[]>([]);
   const [error, setError] = useState<PostgrestError | null>(null);
   const { userID } = useAuth();
 
   /**
    * newTaskとtaskGroupを結合して、DB登録用のデータを作成して返す
    *
-   * @param {TaskItem[]} newTasks : 更新後のtaskList
+   * @param {Card[]} newTasks : 更新後のtaskList
    * @return {*}
    */
   const createPostData = useCallback(
-    (newTasks: TaskItem[], newTaskGroup: TaskItem[]) => {
+    (newTasks: Card[], newTaskGroup: TaskItem[]) => {
       const postData = { task: newTasks, column: newTaskGroup };
       return postData;
     },
@@ -28,11 +28,11 @@ export const useTasks = () => {
   );
   /**
    * taskList更新API実行
-   * @param {TaskItem[]} tasks 変更後のtaskList
+   * @param {Card[]} tasks 変更後のtaskList
    *
    */
   const saveTaskList = useCallback(
-    async (newTasks: TaskItem[], newTaskGroup: TaskItem[]) => {
+    async (newTasks: Card[], newTaskGroup: TaskItem[]) => {
       // DB登録用のデータを作成
       const postData = createPostData(newTasks, newTaskGroup);
 
@@ -55,12 +55,12 @@ export const useTasks = () => {
 
   /**
    * 新規タスクの追加
-   * @param {TaskItem} newTask
+   * @param {Card} newTask
    * @param {number} index
    * @return {*}
    */
   const createTask = useCallback(
-    (newTask: TaskItem, index: number) => {
+    (newTask: Card, index: number) => {
       setTasks((prevTasks) => {
         const newTasks = [...prevTasks];
         newTasks.splice(index, 0, newTask);
@@ -167,7 +167,7 @@ export const useTasks = () => {
    */
   const alignTasks = useCallback((groupNames: string[]) => {
     setTasks((current) => {
-      const newTasks: TaskItem[] = [];
+      const newTasks: Card[] = [];
       groupNames.forEach((groupName) => {
         const grouped = current.filter((task) => {
           return task.groupName === groupName;

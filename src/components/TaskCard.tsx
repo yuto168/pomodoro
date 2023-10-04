@@ -4,14 +4,14 @@ import { ContextMenu } from "primereact/contextmenu";
 import { VscEdit } from "react-icons/vsc";
 import { GiTomato } from "react-icons/gi";
 import { DialogForEdit } from "./ui-parts/DialogForEdit";
-import { TaskItem } from "src/typings/taskItem";
+import { Card } from "src/typings/taskItem";
 import { GlassItem } from "./ui-parts/GlassItem";
 
 type Props = {
-  task: TaskItem;
-  deleteTask: (target: TaskItem) => void;
+  task: Card;
+  deleteTask: (target: Card) => void;
   editTask: (newTaskName: string, taskID: string) => void;
-  setSelectedTask: (task: TaskItem) => void;
+  setSelectedTask: (task: Card) => void;
   setActiveIndex: (index: number) => void;
 };
 
