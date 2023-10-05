@@ -6,10 +6,12 @@ type Props = {
   onContextMenu?: (e: any) => void;
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
+  onClick?: () => void;
+  isSelected?: boolean;
 };
 
 // グラスデザインのタスクアイテム
-const ItemContainer = styled.div`
+const ItemContainer = styled.div<Props>`
   display: flex;
   align-items: center;
   box-sizing: border-box;
@@ -22,6 +24,10 @@ const ItemContainer = styled.div`
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
     background-color: rgba(255, 255, 255, 0.4);
   }
+  background-color: ${(props) =>
+    props.isSelected ? "rgba(255, 255, 255, 0.4)" : "transparent"};
+
+  cursor: pointer;
 `;
 
 export const GlassItem: FC<Props> = (props) => {
@@ -30,6 +36,8 @@ export const GlassItem: FC<Props> = (props) => {
       onContextMenu={props.onContextMenu}
       onMouseEnter={props.onMouseEnter}
       onMouseLeave={props.onMouseLeave}
+      onClick={props.onClick}
+      isSelected={props.isSelected}
     >
       {props.children}
     </ItemContainer>

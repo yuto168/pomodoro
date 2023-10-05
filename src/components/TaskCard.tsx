@@ -2,14 +2,17 @@ import { FC, useRef, useState } from "react";
 import styled from "styled-components";
 import { ContextMenu } from "primereact/contextmenu";
 import { VscEdit } from "react-icons/vsc";
+import { GiTomato } from "react-icons/gi";
 import { DialogForEdit } from "./ui-parts/DialogForEdit";
-import { TaskItem } from "src/typings/taskItem";
+import { Card } from "src/typings/taskItem";
 import { GlassItem } from "./ui-parts/GlassItem";
 
 type Props = {
-  task: TaskItem;
-  deleteTask: (target: TaskItem) => void;
+  task: Card;
+  deleteTask: (target: Card) => void;
   editTask: (newTaskName: string, taskID: string) => void;
+  setSelectedTask: (task: Card) => void;
+  setActiveIndex: (index: number) => void;
 };
 
 type CustomProps = {
@@ -31,9 +34,19 @@ const IconGroup = styled.div`
 `;
 
 const Edit = styled(VscEdit)`
-  padding: 1%;
   font-size: 1.3rem;
   color: rgba(55, 53, 47, 0.65);
+  border: solid 0.5px rgba(78, 77, 76, 0.65);
+  border-radius: 5px;
+  &:hover {
+    backdrop-filter: blur(10px);
+  }
+`;
+
+const PomodoroIcon = styled(GiTomato)`
+  font-size: 1.3rem;
+  color: rgba(236, 35, 69, 0.65);
+  border-radius: 5px;
   &:hover {
     backdrop-filter: blur(5px);
   }
@@ -79,6 +92,13 @@ export const TaskCard: FC<Props> = (props) => {
 
         {showIcon && (
           <IconGroup>
+            {/* icon押下時、タブを切り替え選択中のタスクを変更する */}
+            <PomodoroIcon
+              onClick={() => {
+                props.setActiveIndex(1);
+                props.setSelectedTask(props.task);
+              }}
+            />
             <Edit
               onClick={() => {
                 setShowModal(true);

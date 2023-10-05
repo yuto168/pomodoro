@@ -1,32 +1,41 @@
-import { FC, useState } from "react";
+import { FC, useState, useRef } from "react";
 import styled from "styled-components";
 import { TaskCard } from "./TaskCard";
 import { IoIosAdd } from "react-icons/io";
 import { DialogForAddTask } from "./ui-parts/DialogForAddTask";
 import { useDrop } from "react-dnd";
 import { Draggable } from "./Draggable";
-import { TaskItem, TaskItemWithIndex } from "src/typings/taskItem";
-import { ITEM_TYPES } from "src/typings/itemTypes";
+import { DraggableItem, Card, Column, ITEM_TYPES } from "src/typings/taskItem";
 import layouts from "src/constants/layouts";
+import { ContextMenu } from "primereact/contextmenu";
 import { GlassBoard } from "./ui-parts/GlassBoard";
+import { EditColumnModal } from "src/components/ui-parts/DialogForEditColumn";
 
 // boardはあくまでfilterされたlistを表示するのみにする
 type Props = {
   isOver?: any;
   firstIndex: number;
   groupName: string;
-  taskList: TaskItem[];
-  createTask: (newTask: TaskItem, index: number) => void;
-  deleteTask: (target: TaskItem) => void;
+  currentGroup: Column;
+  taskList: Card[];
+  createTask: (newTask: Card, index: number) => void;
+  deleteTask: (target: Card) => void;
   editTask: (newTaskName: string, taskID: string) => void;
   swapTasks: (dragIndex: number, hoverIndex: number, groupName: string) => void;
-  saveCurrentTasks: () => void;
+  saveCurrnetTaskList: () => void;
+  deleteColumn: (target: Column) => void;
+  editColumn: (newGroupName: string, targetID: string) => void;
+  setSelectedTask: (task: Card) => void;
+  setActiveIndex: (index: number) => void;
 };
 
 const BoardFooter = styled.div`
+  display: flex;
+  align-items: center;
   border: none;
   cursor: pointer;
   margin: 2px;
+  padding-left: 0.3rem;
   height: ${layouts.boardFooterHeight}px;
   color: #ffffff;
   &:hover {
@@ -35,9 +44,25 @@ const BoardFooter = styled.div`
 `;
 
 export const Board: FC<Props> = (props) => {
+  const ref = useRef<any>(null);
+  const menuItem = [
+    {
+      label: "delete columun",
+      command: () => {
+        props.deleteColumn(props.currentGroup);
+      },
+    },
+    {
+      label: "edit columun",
+      command: () => {
+        setShowEditColumnModal(true);
+      },
+    },
+  ];
+
   const [_, drop] = useDrop(() => ({
     accept: ITEM_TYPES.card,
-    hover(dragItem: TaskItemWithIndex) {
+    hover(dragItem: DraggableItem) {
       if (dragItem.groupName === props.groupName) return;
       const dragIndex = dragItem.index;
       const targetIndex =
@@ -50,10 +75,17 @@ export const Board: FC<Props> = (props) => {
     },
   }));
 
+  const [showEditColumnModal, setShowEditColumnModal] = useState(false);
   const [showModal, setShowModal] = useState(false);
   return (
     <>
-      <GlassBoard dropRef={drop}>
+      <ContextMenu model={menuItem} ref={ref} />
+      <GlassBoard
+        dropRef={drop}
+        onContextMenu={(e) => {
+          if (ref.current != null) ref.current.show(e);
+        }}
+      >
         {props.taskList.map((taskItem, i) => {
           return (
             <div key={taskItem.id}>
@@ -61,12 +93,14 @@ export const Board: FC<Props> = (props) => {
                 item={taskItem}
                 index={props.firstIndex + i}
                 swapItems={props.swapTasks}
-                saveCurrentTasks={props.saveCurrentTasks}
+                saveCurrnetTaskList={props.saveCurrnetTaskList}
               >
                 <TaskCard
                   task={taskItem}
                   deleteTask={props.deleteTask}
                   editTask={props.editTask}
+                  setSelectedTask={props.setSelectedTask}
+                  setActiveIndex={props.setActiveIndex}
                 />
               </Draggable>
             </div>
@@ -77,6 +111,12 @@ export const Board: FC<Props> = (props) => {
           <IoIosAdd />
         </BoardFooter>
       </GlassBoard>
+      <EditColumnModal
+        showModal={showEditColumnModal}
+        updateShowModal={setShowEditColumnModal}
+        editTaskGroups={props.editColumn}
+        targetID={props.currentGroup.id}
+      ></EditColumnModal>
       <DialogForAddTask
         showModal={showModal}
         setShowModal={setShowModal}

@@ -9,7 +9,7 @@ type Props = {
   visible?: boolean;
   onHide: () => void;
   footer?: DialogTemplateType;
-  children: ReactNode;
+  children?: ReactNode;
 };
 
 // グラスデザインのダイアログ
