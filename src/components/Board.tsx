@@ -65,10 +65,8 @@ export const Board: FC<Props> = (props) => {
     hover(dragItem: DraggableItem) {
       if (dragItem.groupName === props.groupName) return;
       const dragIndex = dragItem.index;
-      const targetIndex =
-        dragIndex < props.firstIndex
-          ? props.firstIndex + props.taskList.length - 1
-          : props.firstIndex + props.taskList.length;
+      const targetIndex = props.firstIndex;
+
       props.swapTasks(dragIndex, targetIndex, props.groupName);
       dragItem.index = targetIndex;
       dragItem.groupName = props.groupName;
