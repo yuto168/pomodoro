@@ -78,8 +78,7 @@ export const useTimer = (
         return switchMode();
       }
       tick();
-      // TODO: 一時的にタイマーの速度を早くしている
-    }, 1);
+    }, 1000);
 
     return () => {
       clearInterval(interval);
