@@ -38,7 +38,7 @@ const SinginButton = styled(Button)`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  box-sizing: content-box;
+  white-space: nowrap;
   background-color: #272b33;
 `;
 
@@ -59,7 +59,7 @@ export const Base: FC = () => {
           <>
             <SinginButton onClick={signInWithGithub}>
               <GitHubIcon />
-              GitHubでログイン
+              <span>GitHubでログイン</span>
             </SinginButton>
           </>
         )}

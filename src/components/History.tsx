@@ -16,15 +16,13 @@ const PomodoroIcon = styled(GiTomato)`
 `;
 
 const Wrapper = styled.div`
+  margin-top: 3rem;
   display: flex;
   justify-content: center;
-  margin-top: 3rem;
 `;
 
 const StyledDataTable = styled(DataTable)`
-  .p-datatable .p-datatable-tbody .p-datatable-thead {
-    background-color: red !important;
-  }
+  max-width: 100%;
 `;
 
 export const History: FC<Props> = ({ tasks }) => {
@@ -46,7 +44,11 @@ export const History: FC<Props> = ({ tasks }) => {
 
   return (
     <Wrapper>
-      <StyledDataTable value={tasks} tableStyle={{ minWidth: "50rem" }}>
+      <StyledDataTable
+        responsiveLayout="scroll"
+        value={tasks}
+        tableStyle={{ minWidth: "50rem" }}
+      >
         <Column field="groupName" sortable header="Category"></Column>
         <Column field="contents" header="Task"></Column>
         <Column
