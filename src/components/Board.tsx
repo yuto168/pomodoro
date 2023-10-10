@@ -13,7 +13,6 @@ import { EditColumnModal } from "src/components/ui-parts/DialogForEditColumn";
 
 // boardはあくまでfilterされたlistを表示するのみにする
 type Props = {
-  isOver?: any;
   firstIndex: number;
   groupName: string;
   currentGroup: Column;
@@ -44,7 +43,7 @@ const BoardFooter = styled.div`
 `;
 
 export const Board: FC<Props> = (props) => {
-  const ref = useRef<any>(null);
+  const ref = useRef<ContextMenu>(null);
   const menuItem = [
     {
       label: "delete columun",
@@ -65,10 +64,8 @@ export const Board: FC<Props> = (props) => {
     hover(dragItem: DraggableItem) {
       if (dragItem.groupName === props.groupName) return;
       const dragIndex = dragItem.index;
-      const targetIndex =
-        dragIndex < props.firstIndex
-          ? props.firstIndex + props.taskList.length - 1
-          : props.firstIndex + props.taskList.length;
+      const targetIndex = props.firstIndex;
+
       props.swapTasks(dragIndex, targetIndex, props.groupName);
       dragItem.index = targetIndex;
       dragItem.groupName = props.groupName;

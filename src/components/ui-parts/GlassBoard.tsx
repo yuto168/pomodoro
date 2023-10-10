@@ -6,7 +6,7 @@ import { ConnectDropTarget } from "react-dnd";
 type Props = {
   children: ReactNode;
   dropRef: ConnectDropTarget;
-  onContextMenu?: (e: any) => void;
+  onContextMenu?: (e: React.MouseEvent) => void;
 };
 
 // グラスデザインのカンバン
