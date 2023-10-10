@@ -115,7 +115,7 @@ export const useTimer = (
 
   return {
     mode,
-    switchMode,
+    modeRef,
     breakInterval,
     focusInterval,
     secoundLeft,
