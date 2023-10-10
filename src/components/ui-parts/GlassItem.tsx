@@ -3,7 +3,7 @@ import { FC, ReactNode } from "react";
 
 type Props = {
   children: ReactNode;
-  onContextMenu?: (e: any) => void;
+  onContextMenu?: (e: React.MouseEvent) => void;
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
   onClick?: () => void;

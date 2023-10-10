@@ -61,7 +61,7 @@ export const TaskCard: FC<Props> = (props) => {
   const [showModal, setShowModal] = useState(false);
   const [showIcon, setShowIcon] = useState(false);
 
-  const ref = useRef<any>(null);
+  const ref = useRef<ContextMenu>(null);
 
   const menuItem = [
     {

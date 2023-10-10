@@ -44,7 +44,7 @@ const BoardFooter = styled.div`
 `;
 
 export const Board: FC<Props> = (props) => {
-  const ref = useRef<any>(null);
+  const ref = useRef<ContextMenu>(null);
   const menuItem = [
     {
       label: "delete columun",
