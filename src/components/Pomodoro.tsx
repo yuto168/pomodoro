@@ -96,7 +96,8 @@ export const Pomodoro: FC<Props> = ({
 }) => {
   const {
     mode,
-    switchMode,
+    setMode,
+    modeRef,
     minutes,
     isPaused,
     formattedSeconds,
@@ -127,7 +128,8 @@ export const Pomodoro: FC<Props> = ({
           <GlassItem
             onClick={() => {
               handlePause();
-              switchMode();
+              modeRef.current = "Focus";
+              setMode("Focus");
             }}
             isSelected={mode === "Focus"}
           >
@@ -136,11 +138,12 @@ export const Pomodoro: FC<Props> = ({
           <GlassItem
             onClick={() => {
               handlePause();
-              switchMode();
+              modeRef.current = "Break";
+              setMode("Break");
             }}
             isSelected={mode === "Break"}
           >
-            <ModeText>Short Break</ModeText>
+            <ModeText>Break</ModeText>
           </GlassItem>
         </ModeWrapper>
         <TaskManager>
