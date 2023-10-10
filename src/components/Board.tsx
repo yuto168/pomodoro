@@ -13,7 +13,6 @@ import { EditColumnModal } from "src/components/ui-parts/DialogForEditColumn";
 
 // boardはあくまでfilterされたlistを表示するのみにする
 type Props = {
-  isOver?: any;
   firstIndex: number;
   groupName: string;
   currentGroup: Column;
