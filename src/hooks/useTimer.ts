@@ -46,6 +46,11 @@ export const useTimer = (
     secoundLeftRef.current = secondLeft;
   };
 
+  // タイトルを更新する
+  useEffect(() => {
+    document.title = `${minutes}:${formattedSeconds} - Pomodoro Timer`;
+  }, [minutes, formattedSeconds]);
+
   // 残り時間を１減らす
   const tick = () => {
     setSecondLeft((prev) => prev - 1);
