@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { Card } from "src/typings/taskItem";
+import { TAB_TITLE } from "src/constants/tabTitle";
 
 export const useTimer = (
   selectedTask: Card | null,
@@ -48,8 +49,14 @@ export const useTimer = (
 
   // タイトルを更新する
   useEffect(() => {
+    // タブがアクティブなときにタイトルを更新
     document.title = `${minutes}:${formattedSeconds} - Pomodoro Timer`;
-  }, [minutes, formattedSeconds]);
+
+    // タブが非アクティブになったときに元のタイトルに戻す
+    return () => {
+      document.title = TAB_TITLE;
+    };
+  }, [minutes, formattedSeconds, isPaused]);
 
   // 残り時間を１減らす
   const tick = () => {
