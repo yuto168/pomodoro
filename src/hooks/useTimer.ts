@@ -5,6 +5,7 @@ export const useTimer = (
   selectedTask: Card | null,
   updateTaskTimer: (targetID: string, focusTime: number) => void
 ) => {
+  // タイマーの基本設定
   const focusInterval = 25 * 60;
   const breakInterval = 5 * 60;
 
@@ -19,12 +20,36 @@ export const useTimer = (
   const secoundLeftRef = useRef(secoundLeft);
   const focusedTime = useRef(0);
 
+  // 表示用の時間を計算する
   const minutes = Math.floor(secoundLeft / 60);
   const seconds = secoundLeft % 60;
   const formattedSeconds = useMemo(
     () => (seconds < 10 ? `0${seconds}` : seconds),
     [seconds]
   );
+
+  // 一時停止状態を更新する
+  const changePause = (isPaused: boolean) => {
+    setIsPaused(isPaused);
+    pauseRef.current = isPaused;
+  };
+
+  // modeを更新する
+  const changeMode = (mode: string) => {
+    setMode(mode);
+    modeRef.current = mode;
+  };
+
+  // 残り時間を更新する
+  const changeSecondLeft = (secondLeft: number) => {
+    setSecondLeft(secondLeft);
+    secoundLeftRef.current = secondLeft;
+  };
+
+  // タイトルを更新する
+  useEffect(() => {
+    document.title = `${minutes}:${formattedSeconds} - Pomodoro Timer`;
+  }, [minutes, formattedSeconds]);
 
   // 残り時間を１減らす
   const tick = () => {
@@ -40,22 +65,7 @@ export const useTimer = (
   // モードを切り替える
   const switchMode = () => {
     const nextMode = modeRef.current === "Focus" ? "Break" : "Focus";
-    modeRef.current = nextMode;
-    setMode(nextMode);
-  };
-
-  // タイマーをリセットする
-  const resetTimer = () => {
-    handlePause();
-    focusedTime.current = 0;
-
-    setMode("Focus");
-    modeRef.current = "Focus";
-
-    // 残り時間をリセットする
-    const newTime = focusInterval;
-    setSecondLeft(newTime);
-    secoundLeftRef.current = newTime;
+    changeMode(nextMode);
   };
 
   // アンマウント時にタイマーをクリアする
@@ -64,6 +74,7 @@ export const useTimer = (
     if (pauseRef.current) {
       return;
     }
+
     const interval = setInterval(() => {
       if (pauseRef.current) return;
       if (secoundLeftRef.current === 0) {
@@ -85,18 +96,31 @@ export const useTimer = (
     };
   });
 
+  // タイマーをリセットする
+  const resetTimer = () => {
+    handlePause();
+    focusedTime.current = 0;
+
+    // モードをFocusにする
+    changeMode("Focus");
+
+    // 残り時間をリセットする
+    const newTime = focusInterval;
+    changeSecondLeft(newTime);
+  };
+
   // モードが変更されたら残り時間を更新する
   useEffect(() => {
     const newTime = mode === "Focus" ? focusInterval : breakInterval;
+    // 残り時間を更新する
+    changeSecondLeft(newTime);
     focusedTime.current = 0;
-    setSecondLeft(newTime);
-    secoundLeftRef.current = newTime;
-  }, [mode]);
+  }, [mode, selectedTask, updateTaskTimer, breakInterval, focusInterval]);
 
   // タイマーを一時停止する
   const handlePause = () => {
-    setIsPaused(true);
-    pauseRef.current = true;
+    // 一時停止状態を更新する
+    changePause(true);
 
     // 集中した時間でタスクの時間を更新
     if (selectedTask) updateTaskTimer(selectedTask.id, focusedTime.current);
@@ -107,20 +131,17 @@ export const useTimer = (
 
   // タイマーを開始する
   const handleStart = () => {
-    if (pauseRef.current) {
-      setIsPaused(false);
-      pauseRef.current = false;
-    }
+    // 一時停止状態であれば、タイマーを再開する
+    if (isPaused) changePause(false);
   };
 
   return {
     mode,
-    modeRef,
     breakInterval,
     focusInterval,
     secoundLeft,
     focusTime: focusedTime.current,
-    setMode,
+    changeMode,
     minutes,
     formattedSeconds,
     isPaused,
