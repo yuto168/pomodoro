@@ -10,4 +10,5 @@ URL: https://kanban-pomodoro.vercel.app/
 - Styled-Components
 - axios
 - supabase
+- vercel
 
